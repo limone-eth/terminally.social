@@ -50,18 +50,26 @@ body::before {
   animation: grid-drift 70s linear infinite;
 }
 @keyframes grid-drift { to { transform: translate(120px, 120px); } }
-/* token burn — spend figures drifting up through the night */
+/* token burn — spend figures spark upward on their own curved paths */
 .burn { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
 .burn span {
   position: absolute; left: var(--x); bottom: -2em;
-  font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-neutral);
-  opacity: 0; animation: burn-rise var(--d) linear var(--dl) infinite;
+  font-family: var(--font-mono); font-size: calc(var(--text-xs) * var(--s, 1)); color: var(--color-neutral);
+  offset-path: var(--path); offset-rotate: 0deg;
+  opacity: 0;
+  animation:
+    burn-travel var(--d) linear var(--dl) infinite,
+    burn-flicker calc(var(--d) / 7) ease-in-out var(--dl) infinite;
 }
-@keyframes burn-rise {
-  0% { transform: translateY(0); opacity: 0; }
-  10% { opacity: 0.3; }
-  75% { opacity: 0.1; }
-  100% { transform: translateY(-108dvh); opacity: 0; }
+.burn .burn__big { color: var(--color-accent-dim); font-weight: 700; }
+@keyframes burn-travel {
+  0% { offset-distance: 0%; opacity: 0; }
+  8% { opacity: calc(0.34 * var(--s, 1)); }
+  70% { opacity: calc(0.14 * var(--s, 1)); }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+@keyframes burn-flicker {
+  50% { filter: brightness(1.5); }
 }
 /* the refresh sweep — one thin red scanline crossing the screen */
 body::after {
@@ -176,13 +184,13 @@ h1 .accent { text-decoration: underline; text-decoration-color: var(--color-acce
 <body>
 
 <div class="burn" aria-hidden="true">
-  <span style="--x:6%;  --d:17s; --dl:0s">+412</span>
-  <span style="--x:19%; --d:23s; --dl:5s">+1.3k</span>
-  <span style="--x:33%; --d:15s; --dl:9s">+96</span>
-  <span style="--x:52%; --d:26s; --dl:2s">+8.7k</span>
-  <span style="--x:68%; --d:19s; --dl:12s">+233</span>
-  <span style="--x:84%; --d:28s; --dl:7s">+2.1k</span>
-  <span style="--x:93%; --d:16s; --dl:14s">+57k</span>
+  <span style="--x:6%;  --d:19s; --dl:0s;  --s:0.85; --path: path('M 0 0 C 60 -240, -50 -480, 30 -720 S -40 -960, 10 -1100')">+412</span>
+  <span style="--x:19%; --d:25s; --dl:5s;  --s:1.1;  --path: path('M 0 0 C -80 -200, 90 -420, -20 -640 S 70 -900, -30 -1100')">+1.3k</span>
+  <span style="--x:33%; --d:16s; --dl:9s;  --s:0.75; --path: path('M 0 0 C 30 -300, 120 -500, 40 -800 S 90 -1000, 60 -1100')">+96</span>
+  <span style="--x:52%; --d:28s; --dl:2s;  --s:1.0;  --path: path('M 0 0 C -120 -260, -10 -520, -90 -780 S 0 -1000, -60 -1100')">+8.7k</span>
+  <span style="--x:68%; --d:21s; --dl:12s; --s:0.9;  --path: path('M 0 0 C 90 -180, -70 -440, 50 -700 S -50 -940, 20 -1100')">+233</span>
+  <span style="--x:84%; --d:30s; --dl:7s;  --s:1.05; --path: path('M 0 0 C -60 -280, 70 -540, -40 -820 S 40 -1020, 0 -1100')">+2.1k</span>
+  <span class="burn__big" style="--x:90%; --d:13s; --dl:15s; --s:1.15; --path: path('M 0 0 C -180 -300, -320 -560, -480 -840 S -620 -1000, -700 -1100')">+1.0M</span>
 </div>
 
 <header class="nav-term">
