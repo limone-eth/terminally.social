@@ -50,6 +50,19 @@ body::before {
   animation: grid-drift 70s linear infinite;
 }
 @keyframes grid-drift { to { transform: translate(120px, 120px); } }
+/* token burn — spend figures drifting up through the night */
+.burn { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.burn span {
+  position: absolute; left: var(--x); bottom: -2em;
+  font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-neutral);
+  opacity: 0; animation: burn-rise var(--d) linear var(--dl) infinite;
+}
+@keyframes burn-rise {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 0.3; }
+  75% { opacity: 0.1; }
+  100% { transform: translateY(-108dvh); opacity: 0; }
+}
 /* the refresh sweep — one thin red scanline crossing the screen */
 body::after {
   content: ""; position: fixed; left: 0; right: 0; top: -2px; height: 2px; z-index: -1; pointer-events: none;
@@ -125,6 +138,7 @@ h1 .accent { text-decoration: underline; text-decoration-color: var(--color-acce
 .term__msg { margin: 0 0 var(--space-sm); font-family: var(--font-mono); font-size: clamp(0.72rem, 2.4vw, 0.92rem); line-height: 1.65; color: var(--term-ink); }
 .msg-dot { color: var(--term-ink); padding-right: 0.4ch; }
 .term__msg--cont { padding-left: 1.6ch; margin-top: calc(var(--space-sm) * -0.4); }
+.term__msg strong { font-weight: 700; color: var(--term-ink); }
 .tip { margin: 0; }
 .tip2 { padding-left: 1.2ch; }
 .install { display: grid; gap: var(--space-2xs); margin-block: var(--space-xs); }
@@ -155,10 +169,21 @@ h1 .accent { text-decoration: underline; text-decoration-color: var(--color-acce
   .copy:active { transform: none; }
   body::before { animation: none; }
   body::after { display: none; }
+  .burn { display: none; }
 }
 </style>
 </head>
 <body>
+
+<div class="burn" aria-hidden="true">
+  <span style="--x:6%;  --d:17s; --dl:0s">+412</span>
+  <span style="--x:19%; --d:23s; --dl:5s">+1.3k</span>
+  <span style="--x:33%; --d:15s; --dl:9s">+96</span>
+  <span style="--x:52%; --d:26s; --dl:2s">+8.7k</span>
+  <span style="--x:68%; --d:19s; --dl:12s">+233</span>
+  <span style="--x:84%; --d:28s; --dl:7s">+2.1k</span>
+  <span style="--x:93%; --d:16s; --dl:14s">+57k</span>
+</div>
 
 <header class="nav-term">
   <pre><span class="prompt">&gt;</span> terminally.social <a href="https://github.com/limone-eth/terminally.social#privacy-model-read-this-first">never reads your prompts</a> <span class="nav-quip">(unhinged, not stupid)</span></pre>
@@ -198,9 +223,9 @@ h1 .accent { text-decoration: underline; text-decoration-color: var(--color-acce
 
   <section class="term" aria-label="What the notch looks like">
     <p class="term__msg"><span class="msg-dot">●</span> Your friends are already tokenmaxxing.</p>
-    <p class="term__msg term__msg--cont">terminally.social streams their side quests straight into your statusline. Watch them build, judge their projects, and compete for the daily crown. Whoever burns the most tokens wears it. 👑</p>
+    <p class="term__msg term__msg--cont"><strong>terminally.social</strong> streams their side quests straight into your statusline. Watch them build, judge their projects, and compete for the daily crown. Whoever burns the most tokens wears it. 👑</p>
     <p class="term__line tip"><span class="spin">✻</span> <span class="meta">Pondering… (<span class="t-secs">30s</span> · ↓ <span class="t-toks">4.8k</span> tokens)</span></p>
-    <p class="term__line tip2"><span class="meta">└ Tip:</span> 👥 tokenmaxxing today: <span class="crown">👑 🛸 marco (<span class="t-marco">2.1M</span>)</span> <span class="meta">·</span> 🍋 you (1.4M) <span class="meta">·</span> 🌸 lisa (812k)</p>
+    <p class="term__line tip2"><span class="meta">└ Tip:</span> 👥 tokenmaxxing today: <span class="crown">👑 🍓 sam (<span class="t-marco">4.2M</span>)</span> <span class="meta">·</span> 🖇 dario (3.8M) <span class="meta">·</span> 🍋 you (1.4M)</p>
     <div class="install" id="install">
       <button class="install__label copy" data-copy="Set up terminally.social for me and connect me with my friends: read the README at https://github.com/limone-eth/terminally.social and follow it."><span class="copy__label">install · copy/paste into claude code</span> ↓</button>
       <div class="install__box">
@@ -211,9 +236,9 @@ h1 .accent { text-decoration: underline; text-decoration-color: var(--color-acce
     <p class="term__line term__proj">side-quest <span class="meta">git:(</span><span class="git-branch">main</span><span class="git-dirty">*</span><span class="meta">)</span></p>
     <p class="term__line meta">2 MCPs | 7 hooks</p>
     <div class="feed" aria-live="off">
-      <p><span class="dot--on" aria-hidden="true">●</span> 🛸 marco <span class="meta">(2.1M) ·</span> <span class="roll" data-pool='["fighting a flaky test","renaming everything again","arguing with TypeScript","gaslighting the linter"]'>fighting a flaky test</span> <span class="meta">(<span class="roll" data-pool='["todo-app-v9","last-rewrite-i-swear","uber-for-pigeons"]'>todo-app-v9</span>)</span></p>
-      <p><span class="dot--on" aria-hidden="true">●</span> 🌸 lisa <span class="meta">(812k) ·</span> <span class="roll" data-pool='["tuning the telegram alerts","teaching the bot sarcasm","debugging the cron job","arguing with a webhook"]'>tuning the telegram alerts</span> <span class="meta">(<span class="roll" data-pool='["tinder-for-plants","excuse-generator-9000","apartment-bot"]'>tinder-for-plants</span>)</span></p>
-      <p><span class="dot--off" aria-hidden="true">○</span> 🐙 joao <span class="meta">(309k) · idle (<span class="roll" data-pool='["procrastination-engine","vibes-only","zine-gen"]'>procrastination-engine</span>) · 2h</span></p>
+      <p><span class="dot--on" aria-hidden="true">●</span> 🍓 sam <span class="meta">(4.2M) ·</span> <span class="roll" data-pool='["shipping agi (for real this time)","raising another $7T","tweeting through it","gaslighting the benchmark"]'>shipping agi (for real this time)</span> <span class="meta">(<span class="roll" data-pool='["stargate-v2","her-but-legal","q-star-leftovers"]'>stargate-v2</span>)</span></p>
+      <p><span class="dot--on" aria-hidden="true">●</span> 🖇 dario <span class="meta">(3.8M) ·</span> <span class="roll" data-pool='["writing another 10k word essay","measuring model welfare","adding one more safety layer","negotiating with claude"]'>writing another 10k word essay</span> <span class="meta">(<span class="roll" data-pool='["machines-of-loving-grace","big-blob-of-compute","claude-7-do-not-leak"]'>machines-of-loving-grace</span>)</span></p>
+      <p><span class="dot--off" aria-hidden="true">○</span> 🚀 elon <span class="meta">(309k) · idle (<span class="roll" data-pool='["grok-but-based","mars-jira","rewriting-twitter-again"]'>grok-but-based</span>) · 2h</span></p>
     </div>
   </section>
 
@@ -274,7 +299,7 @@ if (!reduced) {
       tokCtl.set(fmtT(toks), { direction: 'up', stagger: 18 })
     }, 2400)
     const marcoCtl = slotText(marcoEl, marcoEl.textContent.trim())
-    let marcoM = 2.1
+    let marcoM = 4.2
     setInterval(() => {
       marcoM += 0.1
       marcoCtl.set(marcoM.toFixed(1) + 'M', { direction: 'up' })
