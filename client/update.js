@@ -1,7 +1,7 @@
 // Self-update — keeps every friend's install on the latest code.
 //
 // Called from `presence pull` (which the statusline triggers every ~30s):
-// at most once an hour, spawn a detached fast-forward pull of the
+// at most once every 10 minutes, spawn a detached fast-forward pull of the
 // install repo + a dependency refresh. Best-effort by design: failures are
 // silent, local changes block the ff-only pull harmlessly, and nothing here
 // can slow down a statusline render or break a Claude session.
@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url'
 import { HOME } from './lib.js'
 
 const STAMP = path.join(HOME, 'cache', 'last-update-check')
-const EVERY_MS = 60 * 60 * 1000
+const EVERY_MS = 10 * 60 * 1000
 
 export function maybeSelfUpdate() {
   try {
