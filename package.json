@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/simonestaffa/claude-presence"
+    "url": "https://github.com/limone-eth/claude-presence"
   },
   "engines": {
     "node": ">=20"

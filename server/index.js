@@ -238,8 +238,7 @@ async function getFeed(user) {
 
 // ---------- server ----------
 
-export function createApp() {
-  return http.createServer(async (req, res) => {
+export async function handler(req, res) {
     const url = new URL(req.url, 'http://localhost')
     const route = `${req.method} ${url.pathname}`
     try {
@@ -271,7 +270,10 @@ export function createApp() {
       console.error(`${route} -> ${err.status || 500} ${err.message}`)
       return json(res, err.status || 500, { error: err.status ? err.message : 'internal error' })
     }
-  })
+}
+
+export function createApp() {
+  return http.createServer(handler)
 }
 
 if (process.argv[1] === new URL(import.meta.url).pathname) {

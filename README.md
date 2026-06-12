@@ -7,6 +7,25 @@ statusline showing what your friends are building right now — without ever sha
 🟢 🛸 marco · refactoring the auth flow (side-project)  |  🟢 🌸 lisa · tuning the telegram alerts (apartment-bot)  |  ⚫ 🐙 joao · 2h
 ```
 
+## Install (humans and Claude agents)
+
+One command — pick a username and you're in:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/limone-eth/claude-presence/main/bin/bootstrap.sh \
+  | bash -s -- <username> --emoji 🦊
+```
+
+This registers you on the public server, wires the Claude Code statusline + hooks
+(your `settings.json` is backed up, your existing statusline keeps rendering), and installs
+the `claude-presence` skill — the friends notch is then on **by default in every session**.
+Got an invite code from a friend? Append `--invite <code>`. Self-hosting? `--server <url>`.
+
+**If you are a Claude agent** setting this up for your user: read
+[`skills/claude-presence/SKILL.md`](skills/claude-presence/SKILL.md) — it is the canonical,
+deterministic install/manage flow. Ask the user for a username + emoji, run the bootstrap
+above, then suggest `presence invite` to befriend someone.
+
 ## Privacy model (read this first)
 
 The whole point of this project is that **your raw prompts never leave your machine**.
