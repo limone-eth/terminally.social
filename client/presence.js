@@ -4,6 +4,7 @@
 import fs from 'node:fs'
 import { loadConfig, saveConfig, writeCache, api, fmtTokens, CONFIG_PATH } from './lib.js'
 import { updateSpinnerTips, clearSpinnerTips, SETTINGS_PATH } from './spinner.js'
+import { maybeSelfUpdate } from './update.js'
 
 const [, , command, ...rest] = process.argv
 
@@ -131,6 +132,7 @@ async function main() {
       const config = requireConfig()
       const { feed, me } = await api(config, 'GET', '/v1/feed')
       writeCache(feed, me)
+      maybeSelfUpdate()
       if (config.spinner_tips) {
         try {
           updateSpinnerTips(feed, me)

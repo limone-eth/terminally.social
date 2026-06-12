@@ -72,9 +72,10 @@ main {
   min-width: 0;
   min-height: 0;
 }
-.head { grid-area: head; display: grid; gap: clamp(0.6rem, 1.6dvh, 1.25rem); }
+.head { grid-area: head; display: grid; gap: clamp(0.6rem, 1.6dvh, 1.1rem); }
 .term { grid-area: demo; }
 .cmd { grid-area: install; }
+.cmd { margin-top: clamp(0.25rem, 1.5dvh, 1rem); }
 @media (min-width: 64rem) {
   main {
     grid-template-areas: "head demo" "install demo";
@@ -119,18 +120,19 @@ h1 .accent { text-decoration: underline; text-decoration-color: var(--color-acce
 .tip .spin, .tip2 .crown { color: var(--color-accent); }
 
 /* ---- install box ---- */
-.cmd { max-width: 64ch; min-width: 0; background: var(--color-paper-2); border: var(--rule-hair) solid var(--color-accent-dim); border-radius: 6px; padding: var(--space-sm) var(--space-md) var(--space-md); }
-.cmd__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-xs) var(--space-md); padding-bottom: var(--space-sm); border-bottom: var(--rule-hair) solid var(--color-rule); }
-.cmd__label { font-family: var(--font-mono); font-size: var(--text-sm); font-weight: 700; color: var(--color-accent); letter-spacing: 0.08em; text-transform: uppercase; }
-.cmd pre { margin: 0; padding-top: var(--space-sm); font-family: var(--font-mono); font-size: clamp(0.82rem, 2.7vw, 1rem); line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
+.cmd { max-width: 52ch; min-width: 0; border-block: var(--rule-hair) solid var(--color-rule); padding-block: var(--space-sm) var(--space-md); }
+.cmd__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-xs) var(--space-md); }
+.cmd__label { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-neutral); letter-spacing: 0.1em; text-transform: uppercase; }
+.cmd pre { margin: 0; padding-top: var(--space-sm); font-family: var(--font-mono); font-size: clamp(0.85rem, 2.7vw, 1.0625rem); line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--color-ink); }
+.cmd pre .prompt { color: var(--color-accent); user-select: none; }
 .copy {
-  font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.08em; text-transform: uppercase;
-  background: none; border: var(--rule-hair) solid var(--color-accent-dim); border-radius: 3px;
-  color: var(--color-ink); padding: 0.45em 1.2em; cursor: pointer; white-space: nowrap;
+  font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.1em; text-transform: uppercase;
+  background: none; border: none; padding: 0.2em 0;
+  color: var(--color-ink); cursor: pointer; white-space: nowrap;
+  text-decoration: underline; text-decoration-color: var(--color-accent); text-underline-offset: 4px;
 }
-.copy:hover { border-color: var(--color-accent); }
-.copy:active { transform: translateY(1px); }
-.copy[data-state="copied"] { color: var(--color-accent); border-color: var(--color-accent); }
+.copy:hover { text-decoration-thickness: 2px; }
+.copy[data-state="copied"] { color: var(--color-accent); }
 
 /* ---- Ft4 colophon, one line ---- */
 .foot-dense { border-top: var(--rule-hair) solid var(--color-rule); padding: var(--space-sm) var(--page-gutter); min-width: 0; }
@@ -172,7 +174,7 @@ h1 .accent { text-decoration: underline; text-decoration-color: var(--color-acce
 
   <section class="cmd" aria-label="Install">
     <div class="cmd__head"><span class="cmd__label">install · paste into claude code</span><button class="copy" data-copy="Set up terminally.social for me: read https://github.com/limone-eth/terminally.social and follow the README install instructions."><span class="copy__label">copy</span></button></div>
-    <pre>Set up terminally.social for me: read https://github.com/limone-eth/terminally.social and follow the README install instructions.</pre>
+    <pre><span class="prompt">&gt; </span>Set up terminally.social for me: read https://github.com/limone-eth/terminally.social and follow the README install instructions.</pre>
   </section>
 </main>
 
