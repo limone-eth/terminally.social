@@ -31,3 +31,14 @@ CREATE TABLE IF NOT EXISTS presence (
   summary TEXT,
   updated_at INTEGER NOT NULL
 );
+
+-- per-session daily token usage — tokens is the absolute total for that
+-- session, re-posted by the client on each Stop (counts only, never content)
+CREATE TABLE IF NOT EXISTS usage (
+  user_id TEXT NOT NULL REFERENCES users(id),
+  session_id TEXT NOT NULL,
+  day TEXT NOT NULL,
+  tokens INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL,
+  PRIMARY KEY (user_id, session_id, day)
+);

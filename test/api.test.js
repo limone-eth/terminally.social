@@ -118,6 +118,21 @@ test('server enforces summary limits as defense in depth', async () => {
   assert.equal(bad.status, 400)
 })
 
+test('usage aggregates per day into the feed', async () => {
+  await call('POST', '/v1/usage', { token: alice.token, body: { session_id: 's1', tokens: 500_000 } })
+  await call('POST', '/v1/usage', { token: alice.token, body: { session_id: 's1', tokens: 800_000 } }) // re-post: absolute, not additive
+  await call('POST', '/v1/usage', { token: alice.token, body: { session_id: 's2', tokens: 200_000 } })
+  await call('POST', '/v1/usage', { token: bob.token, body: { session_id: 's9', tokens: 50_000 } })
+
+  const feed = await call('GET', '/v1/feed', { token: bob.token })
+  const entry = feed.body.feed.find((f) => f.username === 'alice')
+  assert.equal(entry.tokens_today, 1_000_000)
+  assert.equal(feed.body.me.tokens_today, 50_000)
+
+  const bad = await call('POST', '/v1/usage', { token: bob.token, body: { session_id: 's9', tokens: -5 } })
+  assert.equal(bad.status, 400)
+})
+
 test('unfriending removes feed access', async () => {
   const res = await call('DELETE', '/v1/friends/alice', { token: bob.token })
   assert.equal(res.status, 200)

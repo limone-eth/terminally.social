@@ -27,9 +27,16 @@ test('renderTips shows only working friends, most recent first', () => {
   ])
 })
 
+test('renderTips leads with the tokenmaxxing leaderboard', () => {
+  const feed = FEED.map((f, i) => ({ ...f, tokens_today: [2_100_000, 812_000, 0, 0][i] }))
+  const tips = renderTips(feed, { tokens_today: 1_400_000 })
+  assert.equal(tips[0], '👥 tokenmaxxing today: 👑 🛸 marco 2.1M · you 1.4M · 🌸 lisa 812k')
+  assert.ok(tips[1].includes('lisa'))
+})
+
 test('updateSpinnerTips writes tips and preserves other settings', () => {
   const settingsPath = tmpSettings({ model: 'opus', spinnerTipsOverride: { excludeDefault: true, tips: ['mine'] } })
-  const changed = updateSpinnerTips(FEED, { settingsPath })
+  const changed = updateSpinnerTips(FEED, null, { settingsPath })
   assert.equal(changed, true)
   const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'))
   assert.equal(settings.model, 'opus')
@@ -39,15 +46,15 @@ test('updateSpinnerTips writes tips and preserves other settings', () => {
 
 test('updateSpinnerTips is a no-op when tips are unchanged', () => {
   const settingsPath = tmpSettings({})
-  assert.equal(updateSpinnerTips(FEED, { settingsPath }), true)
+  assert.equal(updateSpinnerTips(FEED, null, { settingsPath }), true)
   const before = fs.statSync(settingsPath).mtimeMs
-  assert.equal(updateSpinnerTips(FEED, { settingsPath }), false)
+  assert.equal(updateSpinnerTips(FEED, null, { settingsPath }), false)
   assert.equal(fs.statSync(settingsPath).mtimeMs, before)
 })
 
 test('updateSpinnerTips never creates a missing settings file', () => {
   const settingsPath = tmpSettings(undefined)
-  assert.equal(updateSpinnerTips(FEED, { settingsPath }), false)
+  assert.equal(updateSpinnerTips(FEED, null, { settingsPath }), false)
   assert.equal(fs.existsSync(settingsPath), false)
 })
 

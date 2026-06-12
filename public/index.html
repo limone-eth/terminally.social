@@ -3,20 +3,29 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>terminally.social — your friends, in your statusline</title>
-<meta name="description" content="Discord-style presence for Claude Code. See what your friends are building — without ever sharing your prompts.">
+<title>terminally.social: who is tokenmaxxing today?</title>
+<meta name="description" content="Every day is a match: see what your friends are building in Claude Code and who burns the most tokens. The crown lives in your statusline. Prompts never leave your machine.">
 <meta property="og:title" content="terminally.social">
-<meta property="og:description" content="Your friends, in your statusline. Presence for Claude Code that never sees your prompts.">
-<meta property="og:image" content="https://terminally.social/assets/shader-poster.jpg">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='5' fill='%2333e08a'/%3E%3C/svg%3E">
+<meta property="og:description" content="A daily token match between you and your friends, right in the Claude Code statusline. Watch what everyone builds. Prompts never leave your machine.">
+<meta property="og:url" content="https://terminally.social">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://terminally.social/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="terminally.social">
+<meta name="twitter:description" content="A daily token match between you and your friends, right in the Claude Code statusline.">
+<meta name="twitter:image" content="https://terminally.social/assets/og.png">
+<meta name="theme-color" content="#1c1714">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Geist:wght@400;600&display=swap">
 <link rel="stylesheet" href="https://esm.sh/slot-text@0.2.2/style.css">
 <link rel="stylesheet" href="/tokens.css">
 <style>
-/* Hallmark · macrostructure: Marquee Hero (single-fold, no scroll) · theme: Terminal — full stamp in tokens.css
- * user-directed additions: LUMEN shader canvas (Data Glyphs · seed 9015 · Acid Garden) + slot-text rolls */
+/* Hallmark · macrostructure: Marquee Hero (single-fold, no scroll) · theme: custom warm-terminal — full stamp in tokens.css */
 *, *::before, *::after { box-sizing: border-box; }
 html { overflow: clip; height: 100%; }
 body {
@@ -33,21 +42,17 @@ body {
   padding-inline: max(0px, env(safe-area-inset-left));
   padding-bottom: env(safe-area-inset-bottom);
 }
+/* two soft warm blooms — the only atmosphere, no shader */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(42% 38% at 78% 12%, color-mix(in oklch, var(--color-accent) 13%, transparent), transparent 70%),
+    radial-gradient(36% 34% at 8% 88%, color-mix(in oklch, var(--color-accent-dim) 10%, transparent), transparent 70%);
+}
 ::selection { background: var(--color-accent-dim); color: var(--color-paper); }
 a { color: var(--color-ink); text-decoration: underline; text-decoration-color: var(--color-accent-dim); text-underline-offset: 3px; }
 a:hover { text-decoration-color: var(--color-accent); }
 :focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
-
-/* ---- LUMEN shader canvas (behind everything, veiled for contrast) ---- */
-.canvas { position: fixed; inset: 0; z-index: -1; background: var(--color-paper) url('/assets/shader-poster.jpg') center / cover no-repeat; }
-.canvas video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.canvas::after {
-  content: ""; position: absolute; inset: 0;
-  background: linear-gradient(100deg,
-    color-mix(in oklch, var(--color-paper) 92%, transparent) 0%,
-    color-mix(in oklch, var(--color-paper) 86%, transparent) 55%,
-    color-mix(in oklch, var(--color-paper) 62%, transparent) 100%);
-}
 
 /* ---- N8 terminal nav ---- */
 .nav-term { padding: var(--space-sm) var(--page-gutter); border-bottom: var(--rule-hair) solid var(--color-rule); min-width: 0; }
@@ -61,15 +66,29 @@ a:hover { text-decoration-color: var(--color-accent); }
 main {
   display: grid;
   align-content: center;
-  gap: clamp(1.25rem, 4.5dvh, 3.5rem);
-  padding-inline: var(--page-gutter) clamp(1rem, 14vw, 16rem);
+  grid-template-areas: "head" "demo" "install";
+  gap: clamp(0.9rem, 2.4dvh, 2rem);
+  padding-inline: var(--page-gutter);
   min-width: 0;
   min-height: 0;
+}
+.head { grid-area: head; display: grid; gap: clamp(0.6rem, 1.6dvh, 1.25rem); }
+.term { grid-area: demo; }
+.cmd { grid-area: install; }
+@media (min-width: 64rem) {
+  main {
+    grid-template-areas: "head demo" "install demo";
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    column-gap: clamp(2.5rem, 5vw, 6rem);
+    align-items: center;
+    padding-inline: var(--page-gutter) clamp(1.5rem, 6vw, 7rem);
+  }
+  .cmd { align-self: start; }
 }
 h1 {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(1.75rem, 5.4vw + 0.35rem, 4.4rem);
+  font-size: clamp(1.55rem, 4.6vw + 0.3rem, 3.6rem);
   line-height: 1.08;
   letter-spacing: -0.03em;
   margin: 0;
@@ -78,33 +97,38 @@ h1 {
   min-width: 0;
 }
 h1 .accent { text-decoration: underline; text-decoration-color: var(--color-accent); text-decoration-thickness: 0.055em; text-underline-offset: 0.14em; }
+.lede { margin: 0; max-width: 52ch; color: var(--color-muted); font-size: clamp(0.85rem, 2.4vw, 1rem); }
+.lede strong { color: var(--color-ink); font-weight: 600; }
 
-.notch { min-width: 0; max-width: 62ch; }
-.term { border-block: var(--rule-hair) solid var(--color-rule); padding-block: var(--space-md); display: grid; gap: var(--space-xs); }
-.term__line { margin: 0; min-width: 0; font-family: var(--font-mono); font-size: clamp(0.72rem, 2.5vw, 0.95rem); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* ---- the terminal demo: statusline + notch + tip ---- */
+.term { border-block: var(--rule-hair) solid var(--color-rule); padding-block: var(--space-sm); display: grid; gap: var(--space-2xs); max-width: 64ch; min-width: 0; }
+.term__line { margin: 0; min-width: 0; font-family: var(--font-mono); font-size: clamp(0.64rem, 2.3vw, 0.95rem); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .hud-tag { color: var(--color-ink); font-weight: 700; }
 .bar { color: var(--color-rule); letter-spacing: -0.08em; }
 .bar__fill { color: var(--color-accent-dim); }
 .term__proj { color: var(--color-muted); }
 .term__line.meta, .term .meta { color: var(--color-neutral); }
 .feed { display: grid; gap: var(--space-xs); margin-top: var(--space-xs); }
-.feed p { margin: 0; min-width: 0; font-family: var(--font-mono); font-size: clamp(0.72rem, 2.5vw, 0.95rem); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.dot--on  { color: var(--color-accent); }
+.feed p { margin: 0; min-width: 0; font-family: var(--font-mono); font-size: clamp(0.64rem, 2.3vw, 0.95rem); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dot--on  { color: var(--color-go); }
 .dot--off { color: var(--color-neutral); }
 .feed .meta { color: var(--color-neutral); }
+.tip { margin-bottom: var(--space-xs); border-bottom: var(--rule-hair) solid var(--color-rule); padding-bottom: var(--space-sm); }
+.tip .spin, .tip .crown { color: var(--color-accent); }
 
-.cmd { max-width: 62ch; min-width: 0; background: var(--color-paper-2); border: var(--rule-hair) solid var(--color-accent-dim); border-radius: 6px; padding: var(--space-md) var(--space-lg) var(--space-lg); }
+/* ---- install box ---- */
+.cmd { max-width: 64ch; min-width: 0; background: var(--color-paper-2); border: var(--rule-hair) solid var(--color-accent-dim); border-radius: 6px; padding: var(--space-sm) var(--space-md) var(--space-md); }
 .cmd__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-xs) var(--space-md); padding-bottom: var(--space-sm); border-bottom: var(--rule-hair) solid var(--color-rule); }
 .cmd__label { font-family: var(--font-mono); font-size: var(--text-sm); font-weight: 700; color: var(--color-accent); letter-spacing: 0.08em; text-transform: uppercase; }
-.cmd pre { margin: 0; padding-top: var(--space-md); font-family: var(--font-mono); font-size: clamp(0.9rem, 3vw, 1.0625rem); line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
+.cmd pre { margin: 0; padding-top: var(--space-sm); font-family: var(--font-mono); font-size: clamp(0.82rem, 2.7vw, 1rem); line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
 .copy {
   font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.08em; text-transform: uppercase;
   background: none; border: var(--rule-hair) solid var(--color-accent-dim); border-radius: 3px;
   color: var(--color-ink); padding: 0.45em 1.2em; cursor: pointer; white-space: nowrap;
 }
-.copy:hover { border-color: var(--color-accent-dim); }
+.copy:hover { border-color: var(--color-accent); }
 .copy:active { transform: translateY(1px); }
-.copy[data-state="copied"] { color: var(--color-accent); border-color: var(--color-accent-dim); }
+.copy[data-state="copied"] { color: var(--color-accent); border-color: var(--color-accent); }
 
 /* ---- Ft4 colophon, one line ---- */
 .foot-dense { border-top: var(--rule-hair) solid var(--color-rule); padding: var(--space-sm) var(--page-gutter); min-width: 0; }
@@ -112,36 +136,34 @@ h1 .accent { text-decoration: underline; text-decoration-color: var(--color-acce
 .foot-dense a { color: var(--color-neutral); }
 
 @media (pointer: coarse) { .copy { min-height: 44px; } }
+@media (max-height: 580px) { .lede { display: none; } }
 @media (prefers-reduced-motion: reduce) {
   .caret { animation: none; opacity: 1; }
   .copy:active { transform: none; }
-  .canvas video { display: none; }
 }
 </style>
 </head>
 <body>
-
-<div class="canvas" aria-hidden="true">
-  <video autoplay muted loop playsinline poster="/assets/shader-poster.jpg" src="/assets/shader.webm"></video>
-</div>
 
 <header class="nav-term">
   <pre><span class="prompt">&gt;</span> terminally.social <a href="https://github.com/limone-eth/terminally.social">--source</a> <a href="https://github.com/limone-eth/terminally.social#privacy-model-read-this-first">--privacy</a><span class="caret" aria-hidden="true">▮</span></pre>
 </header>
 
 <main>
-  <h1>Your friends,<br>in your <span class="accent">statusline</span>.</h1>
+  <div class="head">
+    <h1>Who’s <span class="accent">tokenmaxxing</span> today?</h1>
+    <p class="lede">Every day is a match: whoever burns the most Claude tokens takes the crown. Watch what your friends build, live in your statusline, while <strong>your prompts never leave your machine</strong>.</p>
+  </div>
 
-  <section class="notch" aria-label="What the notch looks like">
-    <div class="term">
-      <p class="term__line"><span class="hud-tag">[Fable 5 | Max]</span> <span class="bar" aria-hidden="true"><span class="bar__fill">██</span>░░░░░░░░</span> <span class="meta">23%</span> <span class="meta">|</span> <span class="bar" aria-hidden="true"><span class="bar__fill">█</span>░░░░░░░░░</span> <span class="meta">3% (4h 55m / 5h)</span></p>
-      <p class="term__line term__proj">terminally.social</p>
-      <p class="term__line meta">2 MCPs | 7 hooks</p>
-      <div class="feed" aria-live="off">
-      <p><span class="dot--on" aria-hidden="true">●</span> 🛸 marco <span class="meta">·</span> <span class="roll" data-pool='["fighting a flaky test","renaming everything again","arguing with TypeScript","writing migrations"]'>fighting a flaky test</span> <span class="meta">(side-project)</span></p>
-      <p><span class="dot--on" aria-hidden="true">●</span> 🌸 lisa <span class="meta">·</span> <span class="roll" data-pool='["tuning the telegram alerts","scraping idealista listings","adding price-drop detection","debugging the cron job"]'>tuning the telegram alerts</span> <span class="meta">(apartment-bot)</span></p>
-      <p><span class="dot--off" aria-hidden="true">○</span> 🐙 joao <span class="meta">· idle (zine-gen) · 2h</span></p>
-      </div>
+  <section class="term" aria-label="What the notch looks like">
+    <p class="term__line tip"><span class="spin">✻</span> <span class="meta">Pondering…</span> 👥 tokenmaxxing today: <span class="crown">👑 🛸 marco 2.1M</span> <span class="meta">·</span> 🍋 you 1.4M <span class="meta">·</span> 🌸 lisa 812k</p>
+    <p class="term__line"><span class="hud-tag">[Fable 5 | Max]</span> <span class="bar" aria-hidden="true"><span class="bar__fill">██</span>░░░░░░░░</span> <span class="meta">23%</span> <span class="meta">|</span> <span class="bar" aria-hidden="true"><span class="bar__fill">█</span>░░░░░░░░░</span> <span class="meta">3% (4h 55m / 5h)</span></p>
+    <p class="term__line term__proj">side-quest</p>
+    <p class="term__line meta">2 MCPs | 7 hooks</p>
+    <div class="feed" aria-live="off">
+      <p><span class="dot--on" aria-hidden="true">●</span> 🛸 marco <span class="meta">·</span> <span class="roll" data-pool='["fighting a flaky test","renaming everything again","arguing with TypeScript","gaslighting the linter"]'>fighting a flaky test</span> <span class="meta">(<span class="roll" data-pool='["todo-app-v9","definitely-the-last-rewrite","uber-for-pigeons"]'>todo-app-v9</span>) · 2.1M tok</span></p>
+      <p><span class="dot--on" aria-hidden="true">●</span> 🌸 lisa <span class="meta">·</span> <span class="roll" data-pool='["tuning the telegram alerts","teaching the bot sarcasm","debugging the cron job","arguing with a webhook"]'>tuning the telegram alerts</span> <span class="meta">(<span class="roll" data-pool='["tinder-for-plants","excuse-generator-9000","apartment-bot"]'>tinder-for-plants</span>) · 812k tok</span></p>
+      <p><span class="dot--off" aria-hidden="true">○</span> 🐙 joao <span class="meta">· idle (<span class="roll" data-pool='["procrastination-engine","vibes-only","zine-gen"]'>procrastination-engine</span>) · 2h · 309k tok</span></p>
     </div>
   </section>
 
@@ -152,15 +174,11 @@ h1 .accent { text-decoration: underline; text-decoration-color: var(--color-acce
 </main>
 
 <footer class="foot-dense">
-  <p>MIT · <a href="https://github.com/limone-eth/terminally.social">GitHub</a></p>
+  <p>MIT · <a href="https://github.com/limone-eth/terminally.social">GitHub</a> · prompts never leave your machine</p>
 </footer>
 
 <script type="module">
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
-
-// shader canvas: skip the video on save-data connections (poster stays)
-const video = document.querySelector('.canvas video')
-if (navigator.connection?.saveData) video.remove()
 
 // copy button — fallback first, upgraded to slot-text below
 const btn = document.querySelector('.copy')

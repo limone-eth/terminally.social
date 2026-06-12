@@ -223,17 +223,44 @@ async function updatePresence(user, body) {
   return [200, { ok: true }]
 }
 
+const utcDay = () => new Date().toISOString().slice(0, 10)
+
+async function recordUsage(user, body) {
+  const sessionId = clean(body.session_id, 64)
+  const tokens = Number(body.tokens)
+  if (!sessionId) return [400, { error: 'session_id is required' }]
+  if (!Number.isFinite(tokens) || tokens < 0 || tokens > 1e10) {
+    return [400, { error: 'tokens must be a non-negative number' }]
+  }
+  await db.execute({
+    sql: `INSERT INTO usage (user_id, session_id, day, tokens, updated_at) VALUES (?, ?, ?, ?, ?)
+          ON CONFLICT (user_id, session_id, day) DO UPDATE SET
+            tokens = excluded.tokens, updated_at = excluded.updated_at`,
+    args: [user.id, sessionId, utcDay(), Math.round(tokens), Date.now()],
+  })
+  return [200, { ok: true }]
+}
+
 async function getFeed(user) {
   const result = await db.execute({
-    sql: `SELECT u.username, u.emoji, p.status, p.project, p.summary, p.updated_at
+    sql: `SELECT u.id AS user_id, u.username, u.emoji, p.status, p.project, p.summary, p.updated_at
           FROM friendships f
           JOIN users u ON u.id = CASE WHEN f.user_a = ? THEN f.user_b ELSE f.user_a END
           LEFT JOIN presence p ON p.user_id = u.id
           WHERE f.user_a = ? OR f.user_b = ?`,
     args: [user.id, user.id, user.id],
   })
+  const usage = await db.execute({
+    sql: 'SELECT user_id, SUM(tokens) AS tokens FROM usage WHERE day = ? GROUP BY user_id',
+    args: [utcDay()],
+  })
+  const tokensByUser = new Map(usage.rows.map((r) => [r.user_id, Number(r.tokens)]))
   const now = Date.now()
-  return [200, { feed: result.rows.map((row) => presenceView(row, now)) }]
+  const feed = result.rows.map((row) => ({
+    ...presenceView(row, now),
+    tokens_today: tokensByUser.get(row.user_id) || 0,
+  }))
+  return [200, { feed, me: { tokens_today: tokensByUser.get(user.id) || 0 } }]
 }
 
 // ---------- server ----------
@@ -262,6 +289,7 @@ export async function handler(req, res) {
         return json(res, ...(await removeFriend(user, username)))
       }
       if (route === 'POST /v1/presence') return json(res, ...(await updatePresence(user, await readBody(req))))
+      if (route === 'POST /v1/usage') return json(res, ...(await recordUsage(user, await readBody(req))))
       if (route === 'GET /v1/feed') return json(res, ...(await getFeed(user)))
 
       return json(res, 404, { error: 'not found' })

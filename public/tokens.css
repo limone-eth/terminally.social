@@ -1,5 +1,5 @@
-/* Hallmark · genre: atmospheric (terminal register) · macrostructure: Marquee Hero · theme: Terminal
- * tone: technical · anchor hue: 150 (phosphor) · enrichment: none (typography only)
+/* Hallmark · genre: atmospheric (terminal register, social warm) · macrostructure: Marquee Hero · theme: custom warm-terminal
+ * tone: technical-social · anchor hue: 50 (amber) · enrichment: two soft CSS blooms (LUMEN shader removed — matrix vibes)
  * nav: N8 terminal-command (prompt=">", cursor=end, width=content) · footer: Ft4 dense-colophon (mono · single block · date)
  * H1 Marquee knobs: size=xl, alignment=left-bias, underlay=rule-below
  * F4 Step knobs: numbering=01/02/03, layout=vertical-stack, connector=none
@@ -8,16 +8,18 @@
  */
 :root {
   /* paper → ink, all tinted toward the phosphor anchor */
-  --color-paper:      oklch(13% 0.012 150);
-  --color-paper-2:    oklch(16.5% 0.014 150);
-  --color-paper-3:    oklch(20% 0.015 150);
-  --color-rule:       oklch(30% 0.02 150);
-  --color-neutral:    oklch(64% 0.02 150);
-  --color-muted:      oklch(76% 0.015 150);
-  --color-ink:        oklch(93% 0.01 150);
-  --color-accent:     oklch(80% 0.17 150);
-  --color-accent-dim: oklch(68% 0.11 150);
-  --color-focus:      oklch(80% 0.17 150);
+  --color-paper:      oklch(14% 0.012 50);
+  --color-paper-2:    oklch(17.5% 0.014 50);
+  --color-paper-3:    oklch(21% 0.015 50);
+  --color-rule:       oklch(31% 0.02 50);
+  --color-neutral:    oklch(64% 0.02 50);
+  --color-muted:      oklch(77% 0.015 50);
+  --color-ink:        oklch(94% 0.008 50);
+  --color-accent:     oklch(76% 0.16 55);
+  --color-accent-dim: oklch(63% 0.11 55);
+  --color-focus:      oklch(76% 0.16 55);
+  /* semantic status green — only for the "working" dot */
+  --color-go:         oklch(72% 0.15 150);
 
   --font-display: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
   --font-body:    "Geist", ui-sans-serif, sans-serif;

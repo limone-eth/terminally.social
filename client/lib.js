@@ -31,9 +31,16 @@ export function readCache() {
   }
 }
 
-export function writeCache(feed) {
+export function writeCache(feed, me) {
   fs.mkdirSync(path.dirname(CACHE_PATH), { recursive: true })
-  fs.writeFileSync(CACHE_PATH, JSON.stringify({ fetched_at: Date.now(), feed }) + '\n')
+  fs.writeFileSync(CACHE_PATH, JSON.stringify({ fetched_at: Date.now(), feed, me }) + '\n')
+}
+
+export function fmtTokens(n) {
+  if (!n || n <= 0) return null
+  if (n < 1000) return String(n)
+  if (n < 1e6) return Math.round(n / 1000) + 'k'
+  return (n / 1e6).toFixed(n < 1e7 ? 1 : 0) + 'M'
 }
 
 export async function api(config, method, apiPath, body, { timeoutMs = 4000 } = {}) {

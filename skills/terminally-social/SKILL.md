@@ -48,7 +48,7 @@ Run commands as `node ~/.terminally-social/client/presence.js <command>`:
 | `profile --emoji 🦄 --username name` | customize profile |
 | `share <summary\|project\|off>` | sharing tier (`project` = folder name only) |
 | `ghost <on\|off>` | pause sharing instantly |
-| `spinner <on\|off>` | friends' activity as spinner tips (rewrites `spinnerTipsOverride`, restores on off) |
+| `spinner <on\|off>` | spinner tips show the daily tokenmaxxing leaderboard + friends' activity (rewrites `spinnerTipsOverride`, restores on off) |
 | `status` | show config |
 
 ## Verify / troubleshoot

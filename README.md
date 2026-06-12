@@ -111,6 +111,19 @@ node client/presence.js share project
 | `spinner <on\|off>` | friends' activity as spinner tips |
 | `status` | show current config |
 
+## Tokenmaxxing — the daily match
+
+Every friend's notch line also shows how many tokens they have burned today
+(`· 2.1M tok`), summed across their sessions. The hook counts tokens locally from the
+session transcript on every Stop and sends **only the number** — never any content.
+The spinner tip then becomes the daily leaderboard:
+
+```
+✻ Pondering… (👥 tokenmaxxing today: 👑 🛸 marco 2.1M · 🍋 you 1.4M · 🌸 lisa 812k)
+```
+
+Days roll over at midnight UTC. The crown is honor only. For now.
+
 ## Spinner tips
 
 `presence spinner on` also rotates friends' activity through Claude Code's spinner tips —

@@ -2,7 +2,7 @@
 // terminally.social CLI — manage your identity, friends, and sharing tier.
 
 import fs from 'node:fs'
-import { loadConfig, saveConfig, writeCache, api, CONFIG_PATH } from './lib.js'
+import { loadConfig, saveConfig, writeCache, api, fmtTokens, CONFIG_PATH } from './lib.js'
 import { updateSpinnerTips, clearSpinnerTips, SETTINGS_PATH } from './spinner.js'
 
 const [, , command, ...rest] = process.argv
@@ -121,6 +121,8 @@ async function main() {
         if (f.summary) parts.push(f.summary)
         if (f.project) parts.push(`(${f.project})`)
         if (f.updated_at) parts.push(`· ${timeAgo(f.updated_at)}`)
+        const tok = fmtTokens(f.tokens_today)
+        if (tok) parts.push(`· ${tok} tok`)
         console.log(parts.join(' '))
       }
       break
@@ -128,11 +130,11 @@ async function main() {
 
     case 'pull': {
       const config = requireConfig()
-      const { feed } = await api(config, 'GET', '/v1/feed')
-      writeCache(feed)
+      const { feed, me } = await api(config, 'GET', '/v1/feed')
+      writeCache(feed, me)
       if (config.spinner_tips) {
         try {
-          updateSpinnerTips(feed)
+          updateSpinnerTips(feed, me)
         } catch {
           // spinner tips are cosmetic — never let them fail a pull
         }
@@ -159,9 +161,9 @@ async function main() {
           spinner_tips: true,
           spinner_tips_backup: settings.spinnerTipsOverride ?? null,
         })
-        const { feed } = await api(config, 'GET', '/v1/feed')
-        writeCache(feed)
-        updateSpinnerTips(feed)
+        const { feed, me } = await api(config, 'GET', '/v1/feed')
+        writeCache(feed, me)
+        updateSpinnerTips(feed, me)
         console.log("spinner tips on — friends' activity now rotates through Claude Code's spinner tips")
         console.log(`(writes spinnerTipsOverride in ${SETTINGS_PATH} on each feed refresh)`)
       } else {

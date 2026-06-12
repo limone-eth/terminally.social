@@ -17,17 +17,35 @@ export const SETTINGS_PATH =
   process.env.TERMINALLY_SOCIAL_SETTINGS || path.join(os.homedir(), '.claude', 'settings.json')
 
 const MAX_TIPS = 5
+const MAX_LEADERS = 4
 
-export function renderTips(feed) {
-  return (feed || [])
+import { fmtTokens } from './lib.js'
+
+// Tip 1: today's tokenmaxxing leaderboard (friends + you).
+// Then: what working friends are doing right now.
+export function renderTips(feed, me) {
+  const tips = []
+  const board = (feed || [])
+    .filter((f) => f.tokens_today > 0)
+    .map((f) => ({ label: `${f.emoji} ${f.username}`, tokens: f.tokens_today }))
+  if (me?.tokens_today > 0) board.push({ label: 'you', tokens: me.tokens_today })
+  board.sort((a, b) => b.tokens - a.tokens)
+  if (board.length > 0) {
+    const line = board
+      .slice(0, MAX_LEADERS)
+      .map((e, i) => `${i === 0 ? '👑 ' : ''}${e.label} ${fmtTokens(e.tokens)}`)
+      .join(' · ')
+    tips.push(`👥 tokenmaxxing today: ${line}`)
+  }
+  for (const f of (feed || [])
     .filter((f) => f.status === 'working')
     .sort((a, b) => (b.updated_at || 0) - (a.updated_at || 0))
-    .slice(0, MAX_TIPS)
-    .map((f) => {
-      const doing = f.summary || 'working'
-      const project = f.project ? ` (${f.project})` : ''
-      return `👥 ${f.emoji} ${f.username} · ${doing}${project}`
-    })
+    .slice(0, MAX_TIPS - tips.length)) {
+    const doing = f.summary || 'working'
+    const project = f.project ? ` (${f.project})` : ''
+    tips.push(`👥 ${f.emoji} ${f.username} · ${doing}${project}`)
+  }
+  return tips
 }
 
 function readSettings(settingsPath) {
@@ -45,11 +63,11 @@ function writeSettings(settingsPath, settings) {
 }
 
 // Returns true if settings.json was rewritten.
-export function updateSpinnerTips(feed, { settingsPath = SETTINGS_PATH } = {}) {
+export function updateSpinnerTips(feed, me, { settingsPath = SETTINGS_PATH } = {}) {
   const settings = readSettings(settingsPath)
   if (!settings) return false
 
-  const tips = renderTips(feed)
+  const tips = renderTips(feed, me)
   const current = settings.spinnerTipsOverride
   if (JSON.stringify(current?.tips || []) === JSON.stringify(tips)) return false
 

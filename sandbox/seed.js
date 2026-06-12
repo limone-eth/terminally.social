@@ -87,6 +87,10 @@ async function tick() {
       project: friend.project,
       summary: idle ? undefined : summary,
     })
+    await api(asUser(token), 'POST', '/v1/usage', {
+      session_id: `sandbox-${friend.username}`,
+      tokens: (friend.username.length * 137_000 + state.tick * 91_000) % 4_000_000,
+    })
   }
   saveState(state)
   console.log(`tick ${state.tick}`)

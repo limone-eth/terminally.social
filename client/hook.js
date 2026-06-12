@@ -12,8 +12,33 @@
 // and the network call has a short timeout.
 
 import path from 'node:path'
+import fs from 'node:fs'
+import readline from 'node:readline'
 import { loadConfig, api } from './lib.js'
 import { summarize } from './summarize.js'
+
+// Sum total tokens (input + output + cache) across the session transcript.
+// Counts only — no transcript content ever leaves this process.
+async function sessionTokens(transcriptPath) {
+  if (!transcriptPath || !fs.existsSync(transcriptPath)) return null
+  let total = 0
+  const rl = readline.createInterface({ input: fs.createReadStream(transcriptPath), crlfDelay: Infinity })
+  for await (const line of rl) {
+    if (!line.includes('"usage"')) continue
+    try {
+      const entry = JSON.parse(line)
+      const usage = entry.message?.usage
+      if (entry.type === 'assistant' && usage) {
+        total +=
+          (usage.input_tokens || 0) +
+          (usage.output_tokens || 0) +
+          (usage.cache_creation_input_tokens || 0) +
+          (usage.cache_read_input_tokens || 0)
+      }
+    } catch { /* partial line — skip */ }
+  }
+  return total
+}
 
 async function main() {
   const chunks = []
@@ -47,6 +72,14 @@ async function main() {
   }
 
   if (update) await api(config, 'POST', '/v1/presence', update, { timeoutMs: 1500 })
+
+  // on Stop, also report this session's token total for the daily leaderboard
+  if ((event.hook_event_name === 'Stop' || event.hook_event_name === 'SessionEnd') && event.session_id) {
+    const tokens = await sessionTokens(event.transcript_path)
+    if (tokens !== null && tokens > 0) {
+      await api(config, 'POST', '/v1/usage', { session_id: event.session_id, tokens }, { timeoutMs: 2500 })
+    }
+  }
 }
 
 main()

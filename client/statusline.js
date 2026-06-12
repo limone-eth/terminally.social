@@ -11,7 +11,7 @@
 import { spawn, spawnSync } from 'node:child_process'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { loadConfig, readCache } from './lib.js'
+import { loadConfig, readCache, fmtTokens } from './lib.js'
 
 const STALE_MS = 30 * 1000
 const MAX_SHOWN = 4
@@ -37,7 +37,9 @@ function renderFriend(f) {
   }
   const doing = f.summary || (f.status === 'working' ? 'working' : 'idle')
   const project = f.project ? `${DIM} (${f.project})${RESET}` : ''
-  return `${name}${DIM} ·${RESET} ${doing}${project}`
+  const tok = fmtTokens(f.tokens_today)
+  const tokens = tok ? `${DIM} · ${tok} tok${RESET}` : ''
+  return `${name}${DIM} ·${RESET} ${doing}${project}${tokens}`
 }
 
 function renderFeed(feed) {
