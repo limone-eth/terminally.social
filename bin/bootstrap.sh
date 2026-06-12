@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
-# claude-presence one-shot installer — for humans and Claude agents.
+# terminally-online one-shot installer — for humans and Claude agents.
 #
-#   curl -fsSL https://raw.githubusercontent.com/limone-eth/claude-presence/main/bin/bootstrap.sh \
+#   curl -fsSL https://raw.githubusercontent.com/limone-eth/terminally-online/main/bin/bootstrap.sh \
 #     | bash -s -- <username> [--emoji 🦊] [--server <url>] [--invite <code>]
 #
-# Idempotent: clones (or updates) the repo to ~/.claude-presence, installs the
+# Idempotent: clones (or updates) the repo to ~/.terminally-online, installs the
 # one dependency, registers you (first run only), wires the Claude Code
 # statusline + hooks (with a settings.json backup), accepts an invite code if
-# given, and installs the claude-presence skill so future agents can manage it.
+# given, and installs the terminally-online skill so future agents can manage it.
 set -euo pipefail
 
-REPO_URL="https://github.com/limone-eth/claude-presence"
-REPO_DIR="${CLAUDE_PRESENCE_DIR:-$HOME/.claude-presence}"
-DEFAULT_SERVER="https://claude-presence.vercel.app"
+REPO_URL="https://github.com/limone-eth/terminally-online"
+REPO_DIR="${TERMINALLY_ONLINE_DIR:-$HOME/.terminally-online}"
+DEFAULT_SERVER="https://terminally-online.vercel.app"
 
 USERNAME="${1:-}"
 [ $# -gt 0 ] && shift
@@ -40,7 +40,7 @@ fi
 cd "$REPO_DIR"
 npm install --omit=dev --silent --no-fund --no-audit
 
-if [ ! -f "$HOME/.config/claude-presence/config.json" ]; then
+if [ ! -f "$HOME/.config/terminally-online/config.json" ]; then
   # no username given: prompt the human if a terminal is attached (works even
   # under `curl | bash`), otherwise tell the driving agent to go ask its user
   if [ -z "$USERNAME" ] && sh -c ': < /dev/tty' 2>/dev/null; then
@@ -68,7 +68,7 @@ do not pick a name yourself — ask your user three questions:
   2. a profile emoji
   3. (optional) an invite code from a friend, to connect immediately
 then re-run exactly:
-  curl -fsSL https://raw.githubusercontent.com/limone-eth/claude-presence/main/bin/bootstrap.sh \
+  curl -fsSL https://raw.githubusercontent.com/limone-eth/terminally-online/main/bin/bootstrap.sh \
     | bash -s -- <username> --emoji <emoji> [--invite <code>]
 
 IF YOU ARE A HUMAN: re-run the same command with your username and emoji.
@@ -91,8 +91,8 @@ node bin/install.js
 
 if [ -d "$HOME/.claude" ]; then
   mkdir -p "$HOME/.claude/skills"
-  cp -R skills/claude-presence "$HOME/.claude/skills/" 2>/dev/null || true
-  echo "▸ installed the claude-presence skill (~/.claude/skills/claude-presence)"
+  cp -R skills/terminally-online "$HOME/.claude/skills/" 2>/dev/null || true
+  echo "▸ installed the terminally-online skill (~/.claude/skills/terminally-online)"
 fi
 
 echo

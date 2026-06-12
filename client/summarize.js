@@ -1,4 +1,4 @@
-// Local prompt sanitizer — the privacy boundary of claude-presence.
+// Local prompt sanitizer — the privacy boundary of terminally-online.
 //
 // This is the ONLY code that ever touches your raw prompt, and it runs
 // entirely on your machine (called by client/hook.js). Whatever this

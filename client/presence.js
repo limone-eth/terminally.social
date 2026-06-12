@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// claude-presence CLI — manage your identity, friends, and sharing tier.
+// terminally-online CLI — manage your identity, friends, and sharing tier.
 
 import fs from 'node:fs'
 import { loadConfig, saveConfig, writeCache, api, CONFIG_PATH } from './lib.js'
@@ -210,7 +210,7 @@ async function main() {
     }
 
     default:
-      console.log(`claude-presence — see what your friends are building
+      console.log(`terminally-online — see what your friends are building
 
 usage: presence <command>
 

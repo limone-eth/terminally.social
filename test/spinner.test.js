@@ -13,7 +13,7 @@ const FEED = [
 ]
 
 function tmpSettings(contents) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-presence-spinner-'))
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'terminally-online-spinner-'))
   const settingsPath = path.join(dir, 'settings.json')
   if (contents !== undefined) fs.writeFileSync(settingsPath, JSON.stringify(contents, null, 2))
   return settingsPath

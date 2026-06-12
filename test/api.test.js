@@ -5,7 +5,7 @@ import os from 'node:os'
 import path from 'node:path'
 
 // point the server at a throwaway embedded db BEFORE importing it
-const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-presence-test-'))
+const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'terminally-online-test-'))
 process.env.LIBSQL_URL = `file:${path.join(tmp, 'test.db')}`
 
 const { createApp } = await import('../server/index.js')

@@ -3,7 +3,7 @@
 //   node sandbox/seed.js setup   create friends + befriend you
 //   node sandbox/seed.js tick    advance everyone's activity one step
 //
-// Requires CLAUDE_PRESENCE_HOME to point at the sandbox home (demo.sh sets it).
+// Requires TERMINALLY_ONLINE_HOME to point at the sandbox home (demo.sh sets it).
 
 import fs from 'node:fs'
 import path from 'node:path'

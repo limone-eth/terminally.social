@@ -278,5 +278,5 @@ export function createApp() {
 
 if (process.argv[1] === new URL(import.meta.url).pathname) {
   await init()
-  createApp().listen(PORT, () => console.log(`claude-presence server on :${PORT}`))
+  createApp().listen(PORT, () => console.log(`terminally-online server on :${PORT}`))
 }

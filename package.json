@@ -1,12 +1,12 @@
 {
-  "name": "claude-presence",
+  "name": "terminally-online",
   "version": "0.1.0",
   "description": "Discord-style presence for Claude Code \u2014 see what your friends are building, without ever sharing your prompts.",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/limone-eth/claude-presence"
+    "url": "https://github.com/limone-eth/terminally-online"
   },
   "engines": {
     "node": ">=20"

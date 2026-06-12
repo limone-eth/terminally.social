@@ -2,10 +2,10 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 
-// CLAUDE_PRESENCE_HOME lets the sandbox (and tests) keep a fully separate
+// TERMINALLY_ONLINE_HOME lets the sandbox (and tests) keep a fully separate
 // identity from your real one.
 export const HOME =
-  process.env.CLAUDE_PRESENCE_HOME || path.join(os.homedir(), '.config', 'claude-presence')
+  process.env.TERMINALLY_ONLINE_HOME || path.join(os.homedir(), '.config', 'terminally-online')
 
 export const CONFIG_PATH = path.join(HOME, 'config.json')
 export const CACHE_PATH = path.join(HOME, 'cache', 'feed.json')

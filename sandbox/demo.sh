@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# claude-presence sandbox — everything runs locally, isolated from your real
+# terminally-online sandbox — everything runs locally, isolated from your real
 # config (identity lives in sandbox/.home, DB in a Docker volume).
 #
 #   bash sandbox/demo.sh          live demo: statusline re-renders every 5s
@@ -9,11 +9,11 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-export CLAUDE_PRESENCE_HOME="$ROOT/sandbox/.home"
+export TERMINALLY_ONLINE_HOME="$ROOT/sandbox/.home"
 # fake Claude Code settings file so spinner tips never touch your real one
-export CLAUDE_PRESENCE_SETTINGS="$CLAUDE_PRESENCE_HOME/claude-settings.json"
-mkdir -p "$CLAUDE_PRESENCE_HOME"
-[ -f "$CLAUDE_PRESENCE_SETTINGS" ] || echo '{}' > "$CLAUDE_PRESENCE_SETTINGS"
+export TERMINALLY_ONLINE_SETTINGS="$TERMINALLY_ONLINE_HOME/claude-settings.json"
+mkdir -p "$TERMINALLY_ONLINE_HOME"
+[ -f "$TERMINALLY_ONLINE_SETTINGS" ] || echo '{}' > "$TERMINALLY_ONLINE_SETTINGS"
 export LIBSQL_URL="${LIBSQL_URL:-http://127.0.0.1:8088}"
 export PORT="${PORT:-8787}"
 SERVER_URL="http://127.0.0.1:$PORT"
@@ -35,7 +35,7 @@ for _ in $(seq 1 40); do
 done
 curl -sf "$SERVER_URL/healthz" >/dev/null || { echo "server failed to start"; exit 1; }
 
-if [ ! -f "$CLAUDE_PRESENCE_HOME/config.json" ]; then
+if [ ! -f "$TERMINALLY_ONLINE_HOME/config.json" ]; then
   echo "▸ registering sandbox user 'simone' ..."
   node client/presence.js register simone --emoji 🧑‍💻 --server "$SERVER_URL"
 fi
@@ -43,7 +43,7 @@ fi
 echo "▸ seeding fake friends ..."
 node sandbox/seed.js setup
 
-grep -q '"spinner_tips": true' "$CLAUDE_PRESENCE_HOME/config.json" 2>/dev/null || {
+grep -q '"spinner_tips": true' "$TERMINALLY_ONLINE_HOME/config.json" 2>/dev/null || {
   echo "▸ enabling spinner tips (sandbox settings file) ..."
   node client/presence.js spinner on >/dev/null
 }
@@ -54,7 +54,7 @@ render() {
   echo '{}' | node client/statusline.js
   python3 -c "
 import json
-tips = json.load(open('$CLAUDE_PRESENCE_SETTINGS')).get('spinnerTipsOverride', {}).get('tips', [])
+tips = json.load(open('$TERMINALLY_ONLINE_SETTINGS')).get('spinnerTipsOverride', {}).get('tips', [])
 for t in tips: print('  tip ▸ ' + t)
 "
 }
@@ -64,7 +64,7 @@ echo "── statusline preview ────────────────
 if [ "${1:-}" = "--once" ]; then
   render
   echo "────────────────────────────────────────────────────────────────"
-  echo "sandbox is up. try:  CLAUDE_PRESENCE_HOME=$CLAUDE_PRESENCE_HOME node client/presence.js feed"
+  echo "sandbox is up. try:  TERMINALLY_ONLINE_HOME=$TERMINALLY_ONLINE_HOME node client/presence.js feed"
 else
   echo "(re-rendering every 5s — Ctrl+C to stop)"
   while true; do

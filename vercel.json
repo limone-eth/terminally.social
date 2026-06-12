@@ -1,4 +1,11 @@
 {
+  "redirects": [
+    {
+      "source": "/install",
+      "destination": "https://raw.githubusercontent.com/limone-eth/terminally-online/main/bin/bootstrap.sh",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     { "source": "/healthz", "destination": "/api" },
     { "source": "/v1/:path*", "destination": "/api" }
