@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>claude-presence — your friends, in your statusline</title>
+<meta name="description" content="Discord-style presence for Claude Code. See what your friends are building — without ever sharing your prompts.">
+<meta property="og:title" content="claude-presence">
+<meta property="og:description" content="Your friends, in your statusline. Presence for Claude Code that never sees your prompts.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='5' fill='%2333e08a'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Geist:wght@400;600&display=swap">
+<link rel="stylesheet" href="/tokens.css">
+<style>
+/* Hallmark · macrostructure: Marquee Hero · theme: Terminal — see tokens.css for the full stamp */
+*, *::before, *::after { box-sizing: border-box; }
+html { overflow-x: clip; }
+body {
+  overflow-x: clip;
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  padding-inline: max(0px, env(safe-area-inset-left));
+  padding-bottom: env(safe-area-inset-bottom);
+}
+::selection { background: var(--color-accent-dim); color: var(--color-paper); }
+a { color: var(--color-ink); text-decoration: underline; text-decoration-color: var(--color-accent-dim); text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--color-accent); }
+:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+code, pre { font-family: var(--font-mono); }
+
+/* ---- N8 terminal nav ---- */
+.nav-term { padding: var(--space-sm) var(--page-gutter); border-bottom: var(--rule-hair) solid var(--color-rule); }
+.nav-term pre { font-family: var(--font-mono); font-size: var(--text-sm); margin: 0; white-space: pre-wrap; }
+.nav-term .prompt { color: var(--color-accent); padding-right: 0.4ch; }
+.nav-term a { white-space: nowrap; color: var(--color-ink); }
+.caret { display: inline-block; width: 1ch; color: var(--color-accent); animation: blink 1.05s steps(2) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ---- hero (Marquee, left-bias, rule below) ---- */
+.hero { min-height: 72dvh; display: grid; align-content: end; padding: var(--space-2xl) var(--page-gutter) var(--space-xl); }
+.hero h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--text-display);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  margin: 0;
+  max-width: 14ch;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.hero h1 .accent { text-decoration: underline; text-decoration-color: var(--color-accent); text-decoration-thickness: 0.055em; text-underline-offset: 0.14em; }
+.rule-thick { border: 0; border-top: var(--rule-thick) solid var(--color-rule); margin: 0 var(--page-gutter); }
+
+/* ---- the notch demo ---- */
+.notch { padding: var(--space-xl) var(--page-gutter) var(--space-3xl); }
+.notch__caption { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--color-neutral); margin: 0 0 var(--space-md); max-width: 65ch; }
+.feed { border-block: var(--rule-hair) solid var(--color-rule); padding-block: var(--space-lg); display: grid; gap: var(--space-sm); }
+.feed p { margin: 0; font-family: var(--font-mono); font-size: clamp(0.8rem, 2.6vw, 1rem); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dot--on  { color: var(--color-accent); }
+.dot--off { color: var(--color-neutral); }
+.feed .meta { color: var(--color-neutral); }
+.notch__note { font-size: var(--text-sm); color: var(--color-neutral); margin: var(--space-md) 0 0; max-width: 65ch; }
+
+/* ---- prose sections, left-biased with a wide right margin ---- */
+.section { padding: 0 var(--page-gutter) var(--space-3xl); max-width: 78ch; }
+.section h2 { font-family: var(--font-display); font-weight: 700; font-size: var(--text-xl); line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 var(--space-lg); max-width: 24ch; overflow-wrap: anywhere; }
+.section p { max-width: 65ch; margin: 0 0 var(--space-md); color: var(--color-muted); }
+.section p strong { color: var(--color-ink); font-weight: 600; }
+.section code { font-size: 0.9em; background: var(--color-paper-2); padding: 0.1em 0.35em; border-radius: 3px; }
+
+/* ---- install steps (F4, numbers stacked above) ---- */
+.install { padding-bottom: var(--space-2xl); }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2xl); }
+.steps .stage { display: block; font-family: var(--font-mono); font-size: var(--text-sm); color: var(--color-accent); margin-bottom: var(--space-xs); }
+.steps h3 { font-family: var(--font-display); font-weight: 700; font-size: var(--text-md); margin: 0 0 var(--space-sm); }
+.steps p { max-width: 60ch; margin: 0 0 var(--space-md); color: var(--color-muted); }
+
+/* code blocks: typographic frame (label + rules), never window chrome */
+.cmd { border-block: var(--rule-hair) solid var(--color-rule); max-width: 72ch; }
+.cmd__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-md); padding: var(--space-xs) 0; border-bottom: var(--rule-hair) solid var(--color-rule); }
+.cmd__label { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-neutral); letter-spacing: 0.08em; text-transform: uppercase; }
+.cmd pre { margin: 0; padding: var(--space-md) 0; font-size: var(--text-sm); line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+.cmd .prompt { color: var(--color-accent); user-select: none; }
+.copy {
+  font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.08em; text-transform: uppercase;
+  background: none; border: var(--rule-hair) solid var(--color-rule); border-radius: 3px;
+  color: var(--color-ink); padding: 0.3em 0.9em; cursor: pointer; white-space: nowrap; min-height: 28px;
+}
+.copy:hover { border-color: var(--color-accent-dim); }
+.copy:active { transform: translateY(1px); }
+.copy[data-state="copied"] { color: var(--color-accent); border-color: var(--color-accent-dim); }
+
+/* ---- Ft4 colophon ---- */
+.foot-dense { border-top: var(--rule-hair) solid var(--color-rule); margin-top: var(--space-2xl); padding: var(--space-lg) var(--page-gutter) var(--space-2xl); }
+.foot-dense p { font-family: var(--font-mono); font-size: var(--text-xs); line-height: 1.8; color: var(--color-neutral); max-width: 72ch; margin: 0; }
+.foot-dense a { color: var(--color-neutral); }
+
+@media (pointer: coarse) { .copy { min-height: 44px; min-width: 44px; } }
+@media (min-width: 60rem) {
+  .section, .notch, .install { padding-inline: var(--page-gutter) clamp(4rem, 18vw, 18rem); } /* wide right margin — the asymmetry */
+  .feed { padding-inline: var(--space-lg); margin-inline: calc(var(--space-lg) * -1); } /* feed breaks the prose column */
+}
+@media (prefers-reduced-motion: reduce) {
+  .caret { animation: none; opacity: 1; }
+  .copy:active { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="nav-term">
+  <pre><span class="prompt">&gt;</span> claude-presence <a href="#install">--install</a> <a href="#privacy">--privacy</a> <a href="https://github.com/limone-eth/claude-presence">--source</a><span class="caret" aria-hidden="true">▮</span></pre>
+</header>
+
+<section class="hero">
+  <h1>Your friends, in your <span class="accent">statusline</span>.</h1>
+</section>
+
+<hr class="rule-thick">
+
+<section class="notch" aria-labelledby="notch-caption">
+  <p class="notch__caption" id="notch-caption">One extra line under your Claude Code statusline, refreshed every 30 seconds:</p>
+  <div class="feed">
+    <p><span class="dot--on" aria-hidden="true">●</span> 🛸 marco <span class="meta">·</span> fighting a flaky test <span class="meta">(side-project)</span></p>
+    <p><span class="dot--on" aria-hidden="true">●</span> 🌸 lisa <span class="meta">·</span> tuning the telegram alerts <span class="meta">(apartment-bot)</span></p>
+    <p><span class="dot--off" aria-hidden="true">○</span> 🐙 joao <span class="meta">· idle (zine-gen) · 2h</span></p>
+  </div>
+  <p class="notch__note">marco, lisa and joao are the demo accounts. Your notch shows your actual friends — added by invite code only, never discoverable by username.</p>
+</section>
+
+<section class="section" id="privacy">
+  <h2>The server never sees your prompts.</h2>
+  <p>When you prompt Claude, a hook posts three things: a working/idle flag, your project's folder name, and a one&#8209;line summary. The summary is built <strong>on your machine</strong> by <a href="https://github.com/limone-eth/claude-presence/blob/main/client/summarize.js">summarize.js</a> — first line only, code blocks dropped, credentials, links, emails and paths redacted, cut at 80 characters. That sanitized line is the only prompt-derived text that ever goes over the wire, and the sanitizer is ~60 dependency-free lines so you can audit the whole boundary in one sitting.</p>
+  <p>Want to share less? <code>presence share project</code> sends the folder name only. <code>presence ghost on</code> sends nothing at all.</p>
+</section>
+
+<section class="section install" id="install">
+  <h2>Install</h2>
+  <ol class="steps">
+    <li>
+      <span class="stage" aria-hidden="true">01</span>
+      <h3>Tell your Claude.</h3>
+      <p>Paste this into Claude Code. It reads the repo, asks for your username and emoji, and wires the notch into every new session.</p>
+      <div class="cmd">
+        <div class="cmd__head"><span class="cmd__label">paste into claude code</span><button class="copy" data-copy="Set up claude-presence for me — read https://github.com/limone-eth/claude-presence and follow the README install instructions.">copy</button></div>
+        <pre>Set up claude-presence for me — read
+https://github.com/limone-eth/claude-presence
+and follow the README install instructions.</pre>
+      </div>
+    </li>
+    <li>
+      <span class="stage" aria-hidden="true">02</span>
+      <h3>Or run it by hand.</h3>
+      <p>The installer asks for your username, an emoji, and an optional invite code, right in the terminal. It backs up your Claude settings before touching them.</p>
+      <div class="cmd">
+        <div class="cmd__head"><span class="cmd__label">shell</span><button class="copy" data-copy="curl -fsSL https://raw.githubusercontent.com/limone-eth/claude-presence/main/bin/bootstrap.sh | bash">copy</button></div>
+        <pre><span class="prompt">$</span> curl -fsSL https://raw.githubusercontent.com/limone-eth/claude-presence/main/bin/bootstrap.sh | bash</pre>
+      </div>
+    </li>
+    <li>
+      <span class="stage" aria-hidden="true">03</span>
+      <h3>Befriend someone.</h3>
+      <p>Mint a code with <code>presence invite</code> and send it over whatever channel you already share. One code, one friendship — single-use, expires in 7 days. Their notch lights up with you; yours with them.</p>
+    </li>
+  </ol>
+</section>
+
+<footer class="foot-dense">
+  <p>claude-presence. MIT licensed, open source: <a href="https://github.com/limone-eth/claude-presence">github.com/limone-eth/claude-presence</a>. Plain Node + libSQL; zero-dependency client; prompts sanitized locally in client/summarize.js. Set in JetBrains&nbsp;Mono and Geist. 2026.</p>
+</footer>
+
+<script>
+for (const btn of document.querySelectorAll('.copy')) {
+  btn.addEventListener('click', async () => {
+    await navigator.clipboard.writeText(btn.dataset.copy)
+    btn.dataset.state = 'copied'
+    btn.textContent = 'copied ✓'
+    setTimeout(() => { delete btn.dataset.state; btn.textContent = 'copy' }, 2500)
+  })
+}
+</script>
+
+</body>
+</html>

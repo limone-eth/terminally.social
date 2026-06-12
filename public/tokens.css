@@ -1,0 +1,54 @@
+/* Hallmark · genre: atmospheric (terminal register) · macrostructure: Marquee Hero · theme: Terminal
+ * tone: technical · anchor hue: 150 (phosphor) · enrichment: none (typography only)
+ * nav: N8 terminal-command (prompt=">", cursor=end, width=content) · footer: Ft4 dense-colophon (mono · single block · date)
+ * H1 Marquee knobs: size=xl, alignment=left-bias, underlay=rule-below
+ * F4 Step knobs: numbering=01/02/03, layout=vertical-stack, connector=none
+ * studied: no · first Hallmark run in this project
+ * Hallmark · pre-emit critique: P4 H5 E4 S5 R5 V4
+ */
+:root {
+  /* paper → ink, all tinted toward the phosphor anchor */
+  --color-paper:      oklch(13% 0.012 150);
+  --color-paper-2:    oklch(16.5% 0.014 150);
+  --color-paper-3:    oklch(20% 0.015 150);
+  --color-rule:       oklch(30% 0.02 150);
+  --color-neutral:    oklch(64% 0.02 150);
+  --color-muted:      oklch(76% 0.015 150);
+  --color-ink:        oklch(93% 0.01 150);
+  --color-accent:     oklch(80% 0.17 150);
+  --color-accent-dim: oklch(68% 0.11 150);
+  --color-focus:      oklch(80% 0.17 150);
+
+  --font-display: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+  --font-body:    "Geist", ui-sans-serif, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+
+  /* 1.25 scale on a 16px base */
+  --text-xs:   0.8rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-md:   1.25rem;
+  --text-lg:   1.5625rem;
+  --text-xl:   1.9531rem;
+  --text-2xl:  2.4414rem;
+  --text-display: clamp(2.6rem, 7.5vw + 0.5rem, 5.5rem);
+
+  /* 4pt spacing scale */
+  --space-2xs: 0.25rem;
+  --space-xs:  0.5rem;
+  --space-sm:  0.75rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+  --space-4xl: 9rem;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:  cubic-bezier(0.7, 0, 0.84, 0);
+
+  --rule-hair: 1px;
+  --rule-thick: 3px;
+
+  --page-gutter: clamp(1rem, 4vw, 4rem);
+}
