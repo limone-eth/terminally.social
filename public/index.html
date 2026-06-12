@@ -122,24 +122,27 @@ h1 .accent { text-decoration: underline; text-decoration-color: var(--color-acce
 .dot--off { color: var(--term-neutral); }
 .feed .meta { color: var(--term-neutral); }
 .feed .char-slot, .term .char-slot { line-height: 1.45; }
+.term__msg { margin: 0 0 var(--space-sm); font-family: var(--font-mono); font-size: clamp(0.72rem, 2.4vw, 0.92rem); line-height: 1.65; color: var(--term-ink); }
+.msg-dot { color: var(--term-go); padding-right: 0.4ch; }
 .tip { margin: 0; }
 .tip2 { padding-left: 1.2ch; }
 .install { display: grid; gap: var(--space-2xs); margin-block: var(--space-xs); }
-.install__label { margin: 0; font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--term-accent); }
-.install__box { border: var(--rule-hair) solid var(--term-rule); border-radius: 6px; padding: var(--space-sm) var(--space-md); display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-xs) var(--space-md); }
+.install__label { margin: 0; justify-self: start; }
+.install__box { border-block: var(--rule-hair) solid var(--term-rule); padding: var(--space-sm) 0; display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-xs) var(--space-md); }
 .install__line { margin: 0; flex: 1 1 30ch; min-width: 0; font-family: var(--font-mono); font-size: clamp(0.78rem, 2.5vw, 0.95rem); line-height: 1.65; color: var(--term-ink); overflow-wrap: anywhere; }
 .install__line .prompt { color: var(--term-accent); user-select: none; }
+.install__line .nb { white-space: nowrap; }
+@media (max-width: 30rem) { .install__line .nb { white-space: normal; } }
 .install .caret { color: var(--term-accent); }
 .tip .spin, .tip2 .crown { color: var(--term-accent); }
 
 /* ---- install box ---- */
 .copy {
-  font-family: var(--font-mono); font-size: var(--text-sm); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-  background: var(--term-accent); border: none; border-radius: 4px; padding: 0.45em 1em;
-  color: var(--term-bg); cursor: pointer; white-space: nowrap;
+  font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  background: none; border: none; padding: 0;
+  color: var(--term-accent); cursor: pointer; white-space: nowrap; text-align: left;
 }
-.copy .bracket { color: inherit; opacity: 0.5; }
-.copy:hover { filter: brightness(1.08); }
+.copy:hover .copy__label { text-decoration: underline; text-underline-offset: 4px; }
 .copy:active { transform: translateY(1px); }
 .copy:focus-visible { outline-color: var(--term-ink); }
 
@@ -193,13 +196,13 @@ h1 .accent { text-decoration: underline; text-decoration-color: var(--color-acce
   </div>
 
   <section class="term" aria-label="What the notch looks like">
-    <p class="term__line tip"><span class="spin">✻</span> <span class="meta">Pondering… (30s · ↓ 4.8k tokens)</span></p>
-    <p class="term__line tip2"><span class="meta">└ Tip:</span> 👥 tokenmaxxing today: <span class="crown">👑 🛸 marco (2.1M)</span> <span class="meta">·</span> 🍋 you (1.4M) <span class="meta">·</span> 🌸 lisa (812k)</p>
+    <p class="term__msg"><span class="msg-dot">●</span> terminally.social puts your friends in your statusline: what they’re building, live from their terminals, plus the daily token leaderboard. Whoever burns the most wears the crown.</p>
+    <p class="term__line tip"><span class="spin">✻</span> <span class="meta">Pondering… (<span class="t-secs">30s</span> · ↓ <span class="t-toks">4.8k</span> tokens)</span></p>
+    <p class="term__line tip2"><span class="meta">└ Tip:</span> 👥 tokenmaxxing today: <span class="crown">👑 🛸 marco (<span class="t-marco">2.1M</span>)</span> <span class="meta">·</span> 🍋 you (1.4M) <span class="meta">·</span> 🌸 lisa (812k)</p>
     <div class="install" id="install">
-      <p class="install__label">install · paste into claude code ↓</p>
+      <button class="install__label copy" data-copy="Set up terminally.social for me: read https://github.com/limone-eth/terminally.social and follow the README install instructions."><span class="copy__label">install · copy/paste into claude code</span> ↓</button>
       <div class="install__box">
-        <p class="install__line"><span class="prompt">&gt; </span>Set up terminally.social for me: read the README at github.com/limone-eth/terminally.social and follow the install instructions.<span class="caret" aria-hidden="true">▮</span></p>
-        <button class="copy" data-copy="Set up terminally.social for me: read https://github.com/limone-eth/terminally.social and follow the README install instructions."><span class="bracket">[</span> <span class="copy__label">copy</span> <span class="bracket">]</span></button>
+        <p class="install__line"><span class="prompt">❯ </span>Set up terminally.social for me: read the README at <span class="nb">github.com/limone-eth/terminally.social</span> and follow it.<span class="caret" aria-hidden="true">▮</span></p>
       </div>
     </div>
     <p class="term__line"><span class="hud-tag">[Fable 5 | Max]</span> <span class="bar" aria-hidden="true"><span class="bar__fill">██</span>░░░░░░░░</span> <span class="meta">23%</span> <span class="meta">|</span> <span class="bar" aria-hidden="true"><span class="bar__fill">█</span>░░░░░░░░░</span> <span class="meta">3% (4h 55m / 5h)</span></p>
@@ -221,9 +224,10 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
 // copy button — fallback first, upgraded to slot-text below
 const btn = document.querySelector('.copy')
 const label = btn.querySelector('.copy__label')
+const labelText = label.textContent
 let flashCopied = () => {
   label.textContent = 'copied ✓'
-  setTimeout(() => { label.textContent = 'copy' }, 1800)
+  setTimeout(() => { label.textContent = labelText }, 1800)
 }
 btn.addEventListener('click', async () => {
   await navigator.clipboard.writeText(btn.dataset.copy)
@@ -236,7 +240,7 @@ btn.addEventListener('click', async () => {
 if (!reduced) {
   try {
     const { slotText } = await import('https://esm.sh/slot-text@0.2.2')
-    const copyCtl = slotText(label, 'copy')
+    const copyCtl = slotText(label, labelText)
     flashCopied = () => copyCtl.flash('copied ✓', { revertAfter: 1800, enter: { direction: 'up' }, exit: { direction: 'down' } })
 
     const rolls = [...document.querySelectorAll('.roll')].map((el) => ({
@@ -250,6 +254,29 @@ if (!reduced) {
       r.i = (r.i + 1) % r.pool.length
       r.ctl.set(r.pool[r.i], { direction: 'up', stagger: 14 })
     }, 4200)
+
+    // live token spend: the session counter climbs like the real spinner
+    const secsEl = document.querySelector('.t-secs')
+    const toksEl = document.querySelector('.t-toks')
+    const marcoEl = document.querySelector('.t-marco')
+    let secs = 30
+    let toks = 4800
+    const fmtT = (n) => (n < 1e6 ? (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : (n / 1e6).toFixed(2) + 'M')
+    setInterval(() => {
+      secs += 1
+      secsEl.textContent = secs < 60 ? secs + 's' : Math.floor(secs / 60) + 'm ' + (secs % 60) + 's'
+    }, 1000)
+    const tokCtl = slotText(toksEl, fmtT(toks))
+    setInterval(() => {
+      toks += 250 + Math.floor(Math.random() * 950)
+      tokCtl.set(fmtT(toks), { direction: 'up', stagger: 18 })
+    }, 2400)
+    const marcoCtl = slotText(marcoEl, marcoEl.textContent.trim())
+    let marcoM = 2.1
+    setInterval(() => {
+      marcoM += 0.1
+      marcoCtl.set(marcoM.toFixed(1) + 'M', { direction: 'up' })
+    }, 12000)
   } catch { /* CDN unavailable — the static labels stand */ }
 }
 </script>
