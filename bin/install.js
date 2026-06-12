@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// Wires terminally-online into your real Claude Code setup (~/.claude/settings.json).
+// Wires terminally.social into your real Claude Code setup (~/.claude/settings.json).
 //
-// - Backs up settings.json first (settings.json.terminally-online-backup-<ts>)
-// - Moves your current statusLine command into terminally-online's config as
+// - Backs up settings.json first (settings.json.terminally-social-backup-<ts>)
+// - Moves your current statusLine command into terminally.social's config as
 //   `base_statusline`, so your existing statusline (e.g. claude-hud) still
 //   renders — the friends line is appended below it.
 // - Adds hooks for UserPromptSubmit / Stop / SessionStart / SessionEnd that
@@ -32,7 +32,7 @@ if (!uninstall && !config?.token) {
 }
 
 const settings = JSON.parse(fs.readFileSync(SETTINGS_PATH, 'utf8'))
-const backupPath = `${SETTINGS_PATH}.terminally-online-backup-${Date.now()}`
+const backupPath = `${SETTINGS_PATH}.terminally-social-backup-${Date.now()}`
 fs.copyFileSync(SETTINGS_PATH, backupPath)
 console.log(`backup: ${backupPath}`)
 
@@ -51,7 +51,7 @@ if (uninstall) {
     if (settings.hooks[event].length === 0) delete settings.hooks[event]
   }
   fs.writeFileSync(SETTINGS_PATH, JSON.stringify(settings, null, 2) + '\n')
-  console.log('terminally-online hooks and statusline removed')
+  console.log('terminally.social hooks and statusline removed')
   process.exit(0)
 }
 

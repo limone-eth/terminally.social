@@ -2,7 +2,7 @@
   "redirects": [
     {
       "source": "/install",
-      "destination": "https://raw.githubusercontent.com/limone-eth/terminally-online/main/bin/bootstrap.sh",
+      "destination": "https://raw.githubusercontent.com/limone-eth/terminally.social/main/bin/bootstrap.sh",
       "permanent": false
     }
   ],

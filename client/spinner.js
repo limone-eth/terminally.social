@@ -14,7 +14,7 @@ import os from 'node:os'
 import path from 'node:path'
 
 export const SETTINGS_PATH =
-  process.env.TERMINALLY_ONLINE_SETTINGS || path.join(os.homedir(), '.claude', 'settings.json')
+  process.env.TERMINALLY_SOCIAL_SETTINGS || path.join(os.homedir(), '.claude', 'settings.json')
 
 const MAX_TIPS = 5
 
@@ -39,7 +39,7 @@ function readSettings(settingsPath) {
 }
 
 function writeSettings(settingsPath, settings) {
-  const tmp = settingsPath + '.terminally-online-tmp'
+  const tmp = settingsPath + '.terminally-social-tmp'
   fs.writeFileSync(tmp, JSON.stringify(settings, null, 2) + '\n')
   fs.renameSync(tmp, settingsPath)
 }
@@ -61,7 +61,7 @@ export function updateSpinnerTips(feed, { settingsPath = SETTINGS_PATH } = {}) {
   return true
 }
 
-// Restores the pre-terminally-online value (or removes the key entirely).
+// Restores the pre-terminally.social value (or removes the key entirely).
 export function clearSpinnerTips(backup, { settingsPath = SETTINGS_PATH } = {}) {
   const settings = readSettings(settingsPath)
   if (!settings) return false

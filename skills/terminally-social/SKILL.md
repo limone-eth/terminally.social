@@ -1,12 +1,12 @@
 ---
-name: terminally-online
-description: Install and manage terminally-online — a Discord-style friends notch in the Claude Code statusline. Use when the user wants to install terminally-online, see what friends are building, set up the friends notch, register a presence profile, create or accept friend invites, change the presence emoji/username, control what activity is shared (summary/project/off/ghost), or enable friends' activity in spinner tips.
+name: terminally-social
+description: Install and manage terminally.social — a Discord-style friends notch in the Claude Code statusline. Use when the user wants to install terminally.social, see what friends are building, set up the friends notch, register a presence profile, create or accept friend invites, change the presence emoji/username, control what activity is shared (summary/project/off/ghost), or enable friends' activity in spinner tips.
 ---
 
-# terminally-online
+# terminally.social
 
 Discord-style presence for Claude Code: friends' current activity renders as an extra
-statusline line, optionally also as spinner tips. Repo: https://github.com/limone-eth/terminally-online
+statusline line, optionally also as spinner tips. Repo: https://github.com/limone-eth/terminally.social
 
 **Privacy invariant (tell the user if they ask):** raw prompts never leave the machine.
 A local sanitizer (`client/summarize.js`) reduces each prompt to a redacted one-liner
@@ -18,12 +18,12 @@ before anything is sent; the server only ever sees that.
 and — optionally — an invite code from a friend. Never invent these. Then run:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/limone-eth/terminally-online/main/bin/bootstrap.sh \
+curl -fsSL https://raw.githubusercontent.com/limone-eth/terminally.social/main/bin/bootstrap.sh \
   | bash -s -- <username> --emoji <emoji>
 ```
 
-This clones to `~/.terminally-online`, registers against the public server
-(`https://terminally-online.vercel.app`), backs up `~/.claude/settings.json`, wires the
+This clones to `~/.terminally-social`, registers against the public server
+(`https://terminally.social`), backs up `~/.claude/settings.json`, wires the
 statusline (existing statusline like claude-hud is preserved as the base layer) and the
 presence hooks, and installs this skill. The friends notch then appears in **every new
 Claude Code session by default**. If the user has a friend's invite code, append
@@ -37,7 +37,7 @@ user and re-run — it never auto-picks an identity.
 
 ## Manage (CLI lives in the repo)
 
-Run commands as `node ~/.terminally-online/client/presence.js <command>`:
+Run commands as `node ~/.terminally-social/client/presence.js <command>`:
 
 | command | use |
 | --- | --- |
@@ -53,8 +53,8 @@ Run commands as `node ~/.terminally-online/client/presence.js <command>`:
 
 ## Verify / troubleshoot
 
-- `node ~/.terminally-online/client/presence.js feed` — server reachable + friends visible.
+- `node ~/.terminally-social/client/presence.js feed` — server reachable + friends visible.
 - Notch not rendering? Check `statusLine` in `~/.claude/settings.json` points at
-  `client/statusline.js`, and that a cache exists at `~/.config/terminally-online/cache/feed.json`.
+  `client/statusline.js`, and that a cache exists at `~/.config/terminally-social/cache/feed.json`.
 - Friends show offline after 15 min without updates — that's by design.
-- Uninstall cleanly: `node ~/.terminally-online/bin/install.js --uninstall`.
+- Uninstall cleanly: `node ~/.terminally-social/bin/install.js --uninstall`.

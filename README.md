@@ -1,4 +1,4 @@
-# terminally-online
+# terminally.social
 
 Discord-style presence for [Claude Code](https://claude.com/claude-code): a line in your
 statusline showing what your friends are building right now — without ever sharing your prompts.
@@ -12,17 +12,17 @@ statusline showing what your friends are building right now — without ever sha
 One command — pick a username and you're in:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/limone-eth/terminally-online/main/bin/bootstrap.sh \
+curl -fsSL https://raw.githubusercontent.com/limone-eth/terminally.social/main/bin/bootstrap.sh \
   | bash -s -- <username> --emoji 🦊
 ```
 
 This registers you on the public server, wires the Claude Code statusline + hooks
 (your `settings.json` is backed up, your existing statusline keeps rendering), and installs
-the `terminally-online` skill — the friends notch is then on **by default in every session**.
+the `terminally.social` skill — the friends notch is then on **by default in every session**.
 Got an invite code from a friend? Append `--invite <code>`. Self-hosting? `--server <url>`.
 
 **If you are a Claude agent** setting this up for your user: read
-[`skills/terminally-online/SKILL.md`](skills/terminally-online/SKILL.md) — it is the canonical,
+[`skills/terminally-social/SKILL.md`](skills/terminally-social/SKILL.md) — it is the canonical,
 deterministic install/manage flow. Ask the user for a username + emoji, run the bootstrap
 above, then suggest `presence invite` to befriend someone.
 
@@ -80,7 +80,7 @@ activity changes. Everything is isolated in `sandbox/.home` — your real config
 Poke at it with the CLI:
 
 ```bash
-export TERMINALLY_ONLINE_HOME="$PWD/sandbox/.home"
+export TERMINALLY_SOCIAL_HOME="$PWD/sandbox/.home"
 node client/presence.js feed
 node client/presence.js profile --emoji 🦄
 node client/presence.js share project
