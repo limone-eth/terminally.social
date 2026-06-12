@@ -128,7 +128,7 @@ h1 .accent { text-decoration: underline; text-decoration-color: var(--color-acce
 .lede strong { color: var(--color-ink); font-weight: 600; }
 
 /* ---- the terminal demo: statusline + notch + tip ---- */
-.term { background: var(--term-bg); color: var(--term-ink); border: var(--rule-hair) solid var(--term-rule); border-radius: 4px; padding: var(--space-md) var(--space-lg); display: grid; gap: var(--space-2xs); width: 100%; max-width: 79ch; justify-self: center; min-width: 0; margin-block: clamp(0.25rem, 1.6dvh, 1rem); }
+.term { background: color-mix(in oklch, var(--term-bg) 90%, transparent); color: var(--term-ink); border: var(--rule-hair) solid var(--term-rule); border-radius: 4px; padding: var(--space-md) var(--space-lg); display: grid; gap: var(--space-2xs); width: 100%; max-width: 79ch; justify-self: center; min-width: 0; margin-block: clamp(0.25rem, 1.6dvh, 1rem); }
 .term__line { margin: 0; min-width: 0; font-family: var(--font-mono); font-size: clamp(0.64rem, 2.3vw, 0.95rem); white-space: nowrap; overflow: hidden; text-overflow: clip; contain: paint; }
 .hud-tag { color: var(--term-ink); font-weight: 700; }
 .bar { color: var(--term-rule); letter-spacing: -0.08em; }
@@ -171,6 +171,15 @@ h1 .accent { text-decoration: underline; text-decoration-color: var(--color-acce
 
 
 @media (pointer: coarse) { .copy { min-height: 44px; } }
+/* mobile only — desktop layout untouched */
+@media (max-width: 40rem) {
+  .term { padding: var(--space-sm) var(--space-md); }
+  .install { min-width: 0; }
+  .install__label, .copy { white-space: normal; text-align: left; line-height: 1.5; justify-self: start; }
+  .term__msg--cont { padding-left: 0; }
+  .install__line { flex-basis: 100%; }
+  .tip2 { padding-left: 0.6ch; }
+}
 @media (max-height: 580px) { .lede { display: none; } }
 @media (prefers-reduced-motion: reduce) {
   .caret { animation: none; opacity: 1; }
