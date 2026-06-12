@@ -268,7 +268,8 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
 // copy button — fallback first, upgraded to slot-text below
 const btn = document.querySelector('.copy')
 const label = btn.querySelector('.copy__label')
-const labelText = label.textContent
+const labelText = matchMedia('(max-width: 40rem)').matches ? 'install · copy this' : label.textContent
+label.textContent = labelText
 let flashCopied = () => {
   label.textContent = 'copied ✓'
   setTimeout(() => { label.textContent = labelText }, 1800)
