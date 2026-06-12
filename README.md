@@ -89,7 +89,23 @@ node client/presence.js share project
 | `feed` | print friends' activity |
 | `share <summary\|project\|off>` | choose what you share |
 | `ghost <on\|off>` | pause / resume sharing |
+| `spinner <on\|off>` | friends' activity as spinner tips |
 | `status` | show current config |
+
+## Spinner tips
+
+`presence spinner on` also rotates friends' activity through Claude Code's spinner tips —
+the text shown while Claude is working:
+
+```
+✻ Pondering… (👥 🌸 lisa · debugging the cron job (apartment-bot))
+```
+
+Claude Code has no script interface for the spinner, so this works by rewriting
+`spinnerTipsOverride` in `~/.claude/settings.json` on each feed refresh (settings hot-reload).
+It is opt-in, writes atomically and only when the tips changed, never creates the file, keeps
+your `excludeDefault` preference, and `presence spinner off` restores whatever tips you had
+before. Default tips still rotate alongside unless you've set `excludeDefault: true`.
 
 ## Tests
 

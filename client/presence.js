@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 // claude-presence CLI — manage your identity, friends, and sharing tier.
 
+import fs from 'node:fs'
 import { loadConfig, saveConfig, writeCache, api, CONFIG_PATH } from './lib.js'
+import { updateSpinnerTips, clearSpinnerTips, SETTINGS_PATH } from './spinner.js'
 
 const [, , command, ...rest] = process.argv
 
@@ -128,6 +130,46 @@ async function main() {
       const config = requireConfig()
       const { feed } = await api(config, 'GET', '/v1/feed')
       writeCache(feed)
+      if (config.spinner_tips) {
+        try {
+          updateSpinnerTips(feed)
+        } catch {
+          // spinner tips are cosmetic — never let them fail a pull
+        }
+      }
+      break
+    }
+
+    case 'spinner': {
+      const config = requireConfig()
+      if (!['on', 'off'].includes(positional[0])) {
+        console.error('usage: presence spinner <on|off>')
+        process.exit(1)
+      }
+      if (positional[0] === 'on') {
+        let settings
+        try {
+          settings = JSON.parse(fs.readFileSync(SETTINGS_PATH, 'utf8'))
+        } catch {
+          console.error(`no Claude Code settings found at ${SETTINGS_PATH}`)
+          process.exit(1)
+        }
+        saveConfig({
+          ...config,
+          spinner_tips: true,
+          spinner_tips_backup: settings.spinnerTipsOverride ?? null,
+        })
+        const { feed } = await api(config, 'GET', '/v1/feed')
+        writeCache(feed)
+        updateSpinnerTips(feed)
+        console.log("spinner tips on — friends' activity now rotates through Claude Code's spinner tips")
+        console.log(`(writes spinnerTipsOverride in ${SETTINGS_PATH} on each feed refresh)`)
+      } else {
+        clearSpinnerTips(config.spinner_tips_backup || null)
+        const { spinner_tips_backup, ...rest } = config
+        saveConfig({ ...rest, spinner_tips: false })
+        console.log('spinner tips off — previous spinner settings restored')
+      }
       break
     }
 
@@ -181,6 +223,7 @@ usage: presence <command>
   feed                                              show friends' activity
   share <summary|project|off>                       choose what you share
   ghost <on|off>                                    pause/resume sharing
+  spinner <on|off>                                  friends' activity as spinner tips
   status                                            show your config`)
   }
 }

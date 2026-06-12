@@ -10,6 +10,10 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
 export CLAUDE_PRESENCE_HOME="$ROOT/sandbox/.home"
+# fake Claude Code settings file so spinner tips never touch your real one
+export CLAUDE_PRESENCE_SETTINGS="$CLAUDE_PRESENCE_HOME/claude-settings.json"
+mkdir -p "$CLAUDE_PRESENCE_HOME"
+[ -f "$CLAUDE_PRESENCE_SETTINGS" ] || echo '{}' > "$CLAUDE_PRESENCE_SETTINGS"
 export LIBSQL_URL="${LIBSQL_URL:-http://127.0.0.1:8088}"
 export PORT="${PORT:-8787}"
 SERVER_URL="http://127.0.0.1:$PORT"
@@ -39,10 +43,20 @@ fi
 echo "▸ seeding fake friends ..."
 node sandbox/seed.js setup
 
+grep -q '"spinner_tips": true' "$CLAUDE_PRESENCE_HOME/config.json" 2>/dev/null || {
+  echo "▸ enabling spinner tips (sandbox settings file) ..."
+  node client/presence.js spinner on >/dev/null
+}
+
 render() {
   node sandbox/seed.js tick >/dev/null
   node client/presence.js pull
   echo '{}' | node client/statusline.js
+  python3 -c "
+import json
+tips = json.load(open('$CLAUDE_PRESENCE_SETTINGS')).get('spinnerTipsOverride', {}).get('tips', [])
+for t in tips: print('  tip ▸ ' + t)
+"
 }
 
 echo
