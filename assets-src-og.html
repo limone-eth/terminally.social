@@ -1,0 +1,44 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap">
+<style>
+* { box-sizing: border-box; margin: 0; }
+body {
+  width: 1200px; height: 630px; overflow: hidden; position: relative;
+  background: oklch(13% 0 0); color: oklch(95% 0 0);
+  font-family: "JetBrains Mono", monospace;
+  display: grid; align-content: center; gap: 30px; padding: 0 80px;
+}
+body::before { content: ""; position: absolute; inset: 0;
+  background-image: radial-gradient(circle, oklch(58% 0 0 / 0.13) 1.5px, transparent 2px);
+  background-size: 26px 26px;
+}
+.nav { font-size: 23px; color: oklch(62% 0 0); }
+.nav .p { color: oklch(62% 0.21 27); }
+.nav .w { color: oklch(95% 0 0); font-weight: 700; }
+h1 { font-size: 84px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.04; text-transform: uppercase; }
+h1 .a { text-decoration: underline; text-decoration-color: oklch(62% 0.21 27); text-decoration-thickness: 7px; text-underline-offset: 12px; }
+.panel {
+  background: oklch(14% 0.012 50 / 0.86); border: 1px solid oklch(31% 0.02 50); border-radius: 8px;
+  padding: 24px 30px; display: grid; gap: 13px; font-size: 22.5px; color: oklch(94% 0.008 50);
+  position: relative;
+}
+.meta { color: oklch(64% 0.02 50); }
+.on { color: oklch(72% 0.15 150); }
+.crown { color: oklch(76% 0.16 55); }
+.lead { color: oklch(94% 0.008 50); }
+.lead .dot { padding-right: 6px; }
+.ember { position: absolute; font-size: 19px; color: oklch(62% 0 0 / 0.5); }
+.ember--big { color: oklch(50% 0.15 27 / 0.7); font-weight: 700; }
+</style></head><body>
+<div class="nav"><span class="p">&gt;</span> <span class="w">terminally.social</span> never reads your prompts <span class="meta">(unhinged, not stupid)</span></div>
+<h1><span class="a">Tokenmaxx</span> or log off.</h1>
+<div class="panel">
+  <div class="lead"><span class="dot">●</span> Your friends are already tokenmaxxing and you are not even watching.</div>
+  <div><span class="meta">└ Tip:</span> 👥 tokenmaxxing today: <span class="crown">👑 🍓 sam (4.2M)</span> <span class="meta">·</span> 🍋 you (1.4M)</div>
+  <div><span class="on">●</span> 🍓 sam <span class="meta">(4.2M) ·</span> raising another $7T <span class="meta">(her-but-legal)</span></div>
+  <div><span class="on">●</span> 🖇 dario <span class="meta">(3.8M) ·</span> measuring model welfare <span class="meta">(big-blob-of-compute)</span></div>
+</div>
+<span class="ember" style="top:86px; right:150px;">+1.3k</span>
+<span class="ember ember--big" style="top:290px; right:64px;">+1.0M</span>
+<span class="ember" style="bottom:56px; left:44px;">+412</span>
+</body></html>
