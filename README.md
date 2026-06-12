@@ -1,20 +1,32 @@
 # terminally.social
 
-Discord-style presence for [Claude Code](https://claude.com/claude-code): a line in your
-statusline showing what your friends are building right now — without ever sharing your prompts.
+**Tokenmaxx or log off.** A daily token match between you and your friends, played inside the
+[Claude Code](https://claude.com/claude-code) statusline. See what everyone is building, watch
+who burns the most tokens, and take the crown. Your prompts never leave your machine.
 
 ```
-🟢 🛸 marco · refactoring the auth flow (side-project)  |  🟢 🌸 lisa · tuning the telegram alerts (apartment-bot)  |  ⚫ 🐙 joao · 2h
+● 🛸 marco (2.1M) · renaming everything again (todo-app-v9)
+● 🌸 lisa (812k) · tuning the telegram alerts (tinder-for-plants)
+○ 🐙 joao (309k) · idle (procrastination-engine) · 2h
+
+✻ Pondering…
+  └ Tip: 👥 tokenmaxxing today: 👑 🛸 marco (2.1M) · 🍋 you (1.4M) · 🌸 lisa (812k)
 ```
+
+Landing page: [terminally.social](https://terminally.social)
 
 ## Install (humans and Claude agents)
 
 One command — pick a username and you're in:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/limone-eth/terminally.social/main/bin/bootstrap.sh \
-  | bash -s -- <username> --emoji 🦊
+curl -fsSL https://terminally.social/install | bash
 ```
+
+Run it with no arguments and it asks for your username, emoji, and optional invite code right
+in the terminal. Prefer delegating? Paste this into Claude Code instead:
+
+> Set up terminally.social for me: read https://github.com/limone-eth/terminally.social and follow the README install instructions.
 
 This registers you on the public server, wires the Claude Code statusline + hooks
 (your `settings.json` is backed up, your existing statusline keeps rendering), and installs
@@ -138,6 +150,12 @@ Claude Code has no script interface for the spinner, so this works by rewriting
 It is opt-in, writes atomically and only when the tips changed, never creates the file, keeps
 your `excludeDefault` preference, and `presence spinner off` restores whatever tips you had
 before. Default tips still rotate alongside unless you've set `excludeDefault: true`.
+
+## Staying up to date
+
+Installs keep themselves fresh: at most once every 6 hours, the client fast-forwards its own
+repo (and refreshes dependencies) in a detached background process triggered by the statusline's
+normal feed refresh. Nobody has to remember to update.
 
 ## Tests
 

@@ -1,25 +1,37 @@
-/* Hallmark · genre: atmospheric (terminal register, social warm) · macrostructure: Marquee Hero · theme: custom warm-terminal
- * tone: technical-social · anchor hue: 50 (amber) · enrichment: two soft CSS blooms (LUMEN shader removed — matrix vibes)
- * nav: N8 terminal-command (prompt=">", cursor=end, width=content) · footer: Ft4 dense-colophon (mono · single block · date)
- * H1 Marquee knobs: size=xl, alignment=left-bias, underlay=rule-below
- * F4 Step knobs: numbering=01/02/03, layout=vertical-stack, connector=none
- * studied: no · first Hallmark run in this project
- * Hallmark · pre-emit critique: P4 H5 E4 S5 R5 V4
+/* Hallmark · genre: brand (race-telemetry register) · macrostructure: Marquee Hero poster (single-fold) · theme: custom telemetry
+ * tone: competitive, ironic, technical · anchor hue: 27 (signal red) · palette: chroma-zero paper + one red accent
+ * nav: N8 terminal-command + meta links · footer: install command strip on the red signal band
+ * restyle 2026-06-12: dark race telemetry (night timing screen) — dot-grid texture, warm terminal panel, red signal band CTA
+ * Hallmark · pre-emit critique: P4 H5 E4 S5 R4 V5
  */
 :root {
-  /* paper → ink, all tinted toward the phosphor anchor */
-  --color-paper:      oklch(14% 0.012 50);
-  --color-paper-2:    oklch(17.5% 0.014 50);
-  --color-paper-3:    oklch(21% 0.015 50);
-  --color-rule:       oklch(31% 0.02 50);
-  --color-neutral:    oklch(64% 0.02 50);
-  --color-muted:      oklch(77% 0.015 50);
-  --color-ink:        oklch(94% 0.008 50);
-  --color-accent:     oklch(76% 0.16 55);
-  --color-accent-dim: oklch(63% 0.11 55);
-  --color-focus:      oklch(76% 0.16 55);
+  /* dark race telemetry — chroma-zero night paper, one signal red */
+  --color-paper:      oklch(13% 0 0);
+  --color-paper-2:    oklch(17% 0 0);
+  --color-rule:       oklch(30% 0 0);
+  --color-neutral:    oklch(62% 0 0);
+  --color-muted:      oklch(76% 0 0);
+  --color-ink:        oklch(95% 0 0);
+  --color-accent:     oklch(62% 0.21 27);
+  --color-accent-dim: oklch(50% 0.15 27);
+  --color-focus:      oklch(62% 0.21 27);
   /* semantic status green — only for the "working" dot */
-  --color-go:         oklch(72% 0.15 150);
+  --color-go:         oklch(70% 0.15 150);
+  /* dot-grid texture, dark mode only */
+  --grid-dot:         oklch(58% 0 0 / 0.12);
+
+  /* the terminal panel — the one dark artifact on the light page */
+  --term-bg:      oklch(14% 0.012 50);
+  --term-ink:     oklch(94% 0.008 50);
+  --term-neutral: oklch(64% 0.02 50);
+  --term-rule:    oklch(31% 0.02 50);
+  --term-accent:  oklch(76% 0.16 55);
+  --term-go:      oklch(72% 0.15 150);
+
+  /* the red signal band — the install CTA strip */
+  --cta-bg:  oklch(54% 0.21 27);
+  --cta-ink: oklch(97.5% 0 0);
+  --cta-dim: oklch(86% 0.05 27);
 
   --font-display: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
   --font-body:    "Geist", ui-sans-serif, sans-serif;

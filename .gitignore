@@ -4,3 +4,7 @@ sandbox/.state.json
 *.db
 .DS_Store
 .vercel
+skills/impeccable/
+.agents/
+.claude/
+.impeccable/
