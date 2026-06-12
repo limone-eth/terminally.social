@@ -1,0 +1,5 @@
+node_modules/
+sandbox/.home/
+sandbox/.state.json
+*.db
+.DS_Store

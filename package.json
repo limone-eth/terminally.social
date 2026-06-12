@@ -1,0 +1,24 @@
+{
+  "name": "claude-presence",
+  "version": "0.1.0",
+  "description": "Discord-style presence for Claude Code \u2014 see what your friends are building, without ever sharing your prompts.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/simonestaffa/claude-presence"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "server": "node server/index.js",
+    "test": "node --test 'test/*.test.js'",
+    "sandbox": "bash sandbox/demo.sh",
+    "sandbox:once": "bash sandbox/demo.sh --once",
+    "install-client": "node bin/install.js"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.15.0"
+  }
+}
