@@ -124,6 +124,7 @@ h1 .accent { text-decoration: underline; text-decoration-color: var(--color-acce
 .feed .char-slot, .term .char-slot { line-height: 1.45; }
 .term__msg { margin: 0 0 var(--space-sm); font-family: var(--font-mono); font-size: clamp(0.72rem, 2.4vw, 0.92rem); line-height: 1.65; color: var(--term-ink); }
 .msg-dot { color: var(--term-go); padding-right: 0.4ch; }
+.term__msg--cont { padding-left: 1.6ch; margin-top: calc(var(--space-sm) * -0.4); }
 .tip { margin: 0; }
 .tip2 { padding-left: 1.2ch; }
 .install { display: grid; gap: var(--space-2xs); margin-block: var(--space-xs); }
@@ -196,7 +197,8 @@ h1 .accent { text-decoration: underline; text-decoration-color: var(--color-acce
   </div>
 
   <section class="term" aria-label="What the notch looks like">
-    <p class="term__msg"><span class="msg-dot">●</span> terminally.social puts your friends in your statusline: what they’re building, live from their terminals, plus the daily token leaderboard. Whoever burns the most wears the crown.</p>
+    <p class="term__msg"><span class="msg-dot">●</span> Your friends are already tokenmaxxing.</p>
+    <p class="term__msg term__msg--cont">terminally.social streams their side quests straight into your statusline. Watch them build, judge their projects, and compete for the daily crown. Whoever burns the most tokens wears it. 👑</p>
     <p class="term__line tip"><span class="spin">✻</span> <span class="meta">Pondering… (<span class="t-secs">30s</span> · ↓ <span class="t-toks">4.8k</span> tokens)</span></p>
     <p class="term__line tip2"><span class="meta">└ Tip:</span> 👥 tokenmaxxing today: <span class="crown">👑 🛸 marco (<span class="t-marco">2.1M</span>)</span> <span class="meta">·</span> 🍋 you (1.4M) <span class="meta">·</span> 🌸 lisa (812k)</p>
     <div class="install" id="install">
