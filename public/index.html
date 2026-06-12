@@ -113,8 +113,9 @@ h1 .accent { text-decoration: underline; text-decoration-color: var(--color-acce
 .dot--on  { color: var(--color-go); }
 .dot--off { color: var(--color-neutral); }
 .feed .meta { color: var(--color-neutral); }
-.tip { margin-bottom: var(--space-xs); border-bottom: var(--rule-hair) solid var(--color-rule); padding-bottom: var(--space-sm); }
-.tip .spin, .tip .crown { color: var(--color-accent); }
+.tip { margin: 0; }
+.tip2 { padding-left: 1.2ch; margin-bottom: var(--space-xs); border-bottom: var(--rule-hair) solid var(--color-rule); padding-bottom: var(--space-sm); }
+.tip .spin, .tip2 .crown { color: var(--color-accent); }
 
 /* ---- install box ---- */
 .cmd { max-width: 64ch; min-width: 0; background: var(--color-paper-2); border: var(--rule-hair) solid var(--color-accent-dim); border-radius: 6px; padding: var(--space-sm) var(--space-md) var(--space-md); }
@@ -156,14 +157,15 @@ h1 .accent { text-decoration: underline; text-decoration-color: var(--color-acce
   </div>
 
   <section class="term" aria-label="What the notch looks like">
-    <p class="term__line tip"><span class="spin">✻</span> <span class="meta">Pondering…</span> 👥 tokenmaxxing today: <span class="crown">👑 🛸 marco 2.1M</span> <span class="meta">·</span> 🍋 you 1.4M <span class="meta">·</span> 🌸 lisa 812k</p>
+    <p class="term__line tip"><span class="spin">✻</span> <span class="meta">Pondering… (30s · ↓ 4.8k tokens)</span></p>
+    <p class="term__line tip2"><span class="meta">└ Tip:</span> 👥 tokenmaxxing today: <span class="crown">👑 🛸 marco (2.1M)</span> <span class="meta">·</span> 🍋 you (1.4M) <span class="meta">·</span> 🌸 lisa (812k)</p>
     <p class="term__line"><span class="hud-tag">[Fable 5 | Max]</span> <span class="bar" aria-hidden="true"><span class="bar__fill">██</span>░░░░░░░░</span> <span class="meta">23%</span> <span class="meta">|</span> <span class="bar" aria-hidden="true"><span class="bar__fill">█</span>░░░░░░░░░</span> <span class="meta">3% (4h 55m / 5h)</span></p>
     <p class="term__line term__proj">side-quest</p>
     <p class="term__line meta">2 MCPs | 7 hooks</p>
     <div class="feed" aria-live="off">
-      <p><span class="dot--on" aria-hidden="true">●</span> 🛸 marco <span class="meta">·</span> <span class="roll" data-pool='["fighting a flaky test","renaming everything again","arguing with TypeScript","gaslighting the linter"]'>fighting a flaky test</span> <span class="meta">(<span class="roll" data-pool='["todo-app-v9","definitely-the-last-rewrite","uber-for-pigeons"]'>todo-app-v9</span>) · 2.1M tok</span></p>
-      <p><span class="dot--on" aria-hidden="true">●</span> 🌸 lisa <span class="meta">·</span> <span class="roll" data-pool='["tuning the telegram alerts","teaching the bot sarcasm","debugging the cron job","arguing with a webhook"]'>tuning the telegram alerts</span> <span class="meta">(<span class="roll" data-pool='["tinder-for-plants","excuse-generator-9000","apartment-bot"]'>tinder-for-plants</span>) · 812k tok</span></p>
-      <p><span class="dot--off" aria-hidden="true">○</span> 🐙 joao <span class="meta">· idle (<span class="roll" data-pool='["procrastination-engine","vibes-only","zine-gen"]'>procrastination-engine</span>) · 2h · 309k tok</span></p>
+      <p><span class="dot--on" aria-hidden="true">●</span> 🛸 marco <span class="meta">(2.1M) ·</span> <span class="roll" data-pool='["fighting a flaky test","renaming everything again","arguing with TypeScript","gaslighting the linter"]'>fighting a flaky test</span> <span class="meta">(<span class="roll" data-pool='["todo-app-v9","definitely-the-last-rewrite","uber-for-pigeons"]'>todo-app-v9</span>)</span></p>
+      <p><span class="dot--on" aria-hidden="true">●</span> 🌸 lisa <span class="meta">(812k) ·</span> <span class="roll" data-pool='["tuning the telegram alerts","teaching the bot sarcasm","debugging the cron job","arguing with a webhook"]'>tuning the telegram alerts</span> <span class="meta">(<span class="roll" data-pool='["tinder-for-plants","excuse-generator-9000","apartment-bot"]'>tinder-for-plants</span>)</span></p>
+      <p><span class="dot--off" aria-hidden="true">○</span> 🐙 joao <span class="meta">(309k) · idle (<span class="roll" data-pool='["procrastination-engine","vibes-only","zine-gen"]'>procrastination-engine</span>) · 2h</span></p>
     </div>
   </section>
 

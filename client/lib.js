@@ -5,7 +5,7 @@ import path from 'node:path'
 // TERMINALLY_SOCIAL_HOME lets the sandbox (and tests) keep a fully separate
 // identity from your real one.
 export const HOME =
-  process.env.TERMINALLY_SOCIAL_HOME || path.join(os.homedir(), '.config', 'terminally.social')
+  process.env.TERMINALLY_SOCIAL_HOME || path.join(os.homedir(), '.config', 'terminally-social')
 
 export const CONFIG_PATH = path.join(HOME, 'config.json')
 export const CACHE_PATH = path.join(HOME, 'cache', 'feed.json')

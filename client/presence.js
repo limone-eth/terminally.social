@@ -117,12 +117,11 @@ async function main() {
       const { feed } = await api(config, 'GET', '/v1/feed')
       if (feed.length === 0) console.log('no friends yet — run: presence invite')
       for (const f of feed) {
-        const parts = [`${STATUS_ICON[f.status]} ${f.emoji} ${f.username}`]
+        const tok = fmtTokens(f.tokens_today)
+        const parts = [`${STATUS_ICON[f.status]} ${f.emoji} ${f.username}${tok ? ` (${tok})` : ''}`]
         if (f.summary) parts.push(f.summary)
         if (f.project) parts.push(`(${f.project})`)
         if (f.updated_at) parts.push(`· ${timeAgo(f.updated_at)}`)
-        const tok = fmtTokens(f.tokens_today)
-        if (tok) parts.push(`· ${tok} tok`)
         console.log(parts.join(' '))
       }
       break

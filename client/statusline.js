@@ -31,15 +31,14 @@ function timeAgo(ms) {
 }
 
 function renderFriend(f) {
-  const name = `${STATUS_ICON[f.status]} ${f.emoji} ${f.username}`
+  const tokToday = fmtTokens(f.tokens_today)
+  const name = `${STATUS_ICON[f.status]} ${f.emoji} ${f.username}${tokToday ? `${DIM} (${tokToday})${RESET}` : ''}`
   if (f.status === 'offline') {
     return `${name}${f.updated_at ? `${DIM} · ${timeAgo(f.updated_at)}${RESET}` : ''}`
   }
   const doing = f.summary || (f.status === 'working' ? 'working' : 'idle')
   const project = f.project ? `${DIM} (${f.project})${RESET}` : ''
-  const tok = fmtTokens(f.tokens_today)
-  const tokens = tok ? `${DIM} · ${tok} tok${RESET}` : ''
-  return `${name}${DIM} ·${RESET} ${doing}${project}${tokens}`
+  return `${name}${DIM} ·${RESET} ${doing}${project}`
 }
 
 function renderFeed(feed) {

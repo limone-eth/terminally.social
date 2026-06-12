@@ -33,7 +33,7 @@ export function renderTips(feed, me) {
   if (board.length > 0) {
     const line = board
       .slice(0, MAX_LEADERS)
-      .map((e, i) => `${i === 0 ? '👑 ' : ''}${e.label} ${fmtTokens(e.tokens)}`)
+      .map((e, i) => `${i === 0 ? '👑 ' : ''}${e.label} (${fmtTokens(e.tokens)})`)
       .join(' · ')
     tips.push(`👥 tokenmaxxing today: ${line}`)
   }

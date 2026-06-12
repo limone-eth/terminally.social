@@ -30,7 +30,7 @@ test('renderTips shows only working friends, most recent first', () => {
 test('renderTips leads with the tokenmaxxing leaderboard', () => {
   const feed = FEED.map((f, i) => ({ ...f, tokens_today: [2_100_000, 812_000, 0, 0][i] }))
   const tips = renderTips(feed, { tokens_today: 1_400_000 })
-  assert.equal(tips[0], '👥 tokenmaxxing today: 👑 🛸 marco 2.1M · you 1.4M · 🌸 lisa 812k')
+  assert.equal(tips[0], '👥 tokenmaxxing today: 👑 🛸 marco (2.1M) · you (1.4M) · 🌸 lisa (812k)')
   assert.ok(tips[1].includes('lisa'))
 })
 
