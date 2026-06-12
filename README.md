@@ -153,7 +153,7 @@ before. Default tips still rotate alongside unless you've set `excludeDefault: t
 
 ## Staying up to date
 
-Installs keep themselves fresh: at most once every 6 hours, the client fast-forwards its own
+Installs keep themselves fresh: at most once an hour, the client fast-forwards its own
 repo (and refreshes dependencies) in a detached background process triggered by the statusline's
 normal feed refresh. Nobody has to remember to update.
 
