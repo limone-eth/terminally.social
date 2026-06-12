@@ -7,7 +7,11 @@ import { init } from '../server/db.js'
 let ready
 
 export default async function vercelHandler(req, res) {
-  ready ||= init()
+  // don't cache a failed init — retry on the next request instead
+  ready ||= init().catch((err) => {
+    ready = null
+    throw err
+  })
   await ready
   return handler(req, res)
 }

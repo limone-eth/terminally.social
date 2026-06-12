@@ -3,3 +3,4 @@ sandbox/.home/
 sandbox/.state.json
 *.db
 .DS_Store
+.vercel
