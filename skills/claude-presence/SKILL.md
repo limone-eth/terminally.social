@@ -14,8 +14,8 @@ before anything is sent; the server only ever sees that.
 
 ## Install (one command, idempotent)
 
-Ask the user for a username (lowercase, `[a-z0-9_-]{2,20}`) and optionally an emoji,
-then run:
+**Always ask the user** for a username (lowercase, `[a-z0-9_-]{2,20}`), a profile emoji,
+and — optionally — an invite code from a friend. Never invent these. Then run:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/limone-eth/claude-presence/main/bin/bootstrap.sh \
@@ -30,6 +30,10 @@ Claude Code session by default**. If the user has a friend's invite code, append
 `--invite <code>`. For a self-hosted server, append `--server <url>`.
 
 After install, tell the user to restart Claude Code (or open a new session) to see it.
+
+Running the bootstrap with no username is safe: in a terminal it prompts the human directly
+(via `/dev/tty`); headless it exits with instructions telling the driving agent to ask its
+user and re-run — it never auto-picks an identity.
 
 ## Manage (CLI lives in the repo)
 

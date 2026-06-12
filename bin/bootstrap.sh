@@ -41,8 +41,38 @@ cd "$REPO_DIR"
 npm install --omit=dev --silent --no-fund --no-audit
 
 if [ ! -f "$HOME/.config/claude-presence/config.json" ]; then
+  # no username given: prompt the human if a terminal is attached (works even
+  # under `curl | bash`), otherwise tell the driving agent to go ask its user
+  if [ -z "$USERNAME" ] && sh -c ': < /dev/tty' 2>/dev/null; then
+    while :; do
+      printf "pick a username (lowercase letters/digits/_/-, 2-20 chars): " > /dev/tty
+      read -r USERNAME < /dev/tty || USERNAME=""
+      printf '%s' "$USERNAME" | grep -Eq '^[a-z0-9_-]{2,20}$' && break
+      echo "invalid username, try again" > /dev/tty
+    done
+    printf "pick a profile emoji (enter for 🙂): " > /dev/tty
+    read -r EMOJI < /dev/tty || EMOJI=""
+    [ -n "$EMOJI" ] && EXTRA_ARGS+=(--emoji "$EMOJI")
+    if [ -z "$INVITE" ]; then
+      printf "invite code from a friend (enter to skip): " > /dev/tty
+      read -r INVITE < /dev/tty || INVITE=""
+    fi
+  fi
   if [ -z "$USERNAME" ]; then
-    echo "usage: bootstrap.sh <username> [--emoji 🦊] [--server <url>] [--invite <code>]"
+    cat <<'MSG'
+✋ no username provided and no interactive terminal available.
+
+IF YOU ARE A CODING AGENT (Claude Code, etc.) running this for your user:
+do not pick a name yourself — ask your user three questions:
+  1. a username (lowercase, 2-20 chars of a-z 0-9 _ -)
+  2. a profile emoji
+  3. (optional) an invite code from a friend, to connect immediately
+then re-run exactly:
+  curl -fsSL https://raw.githubusercontent.com/limone-eth/claude-presence/main/bin/bootstrap.sh \
+    | bash -s -- <username> --emoji <emoji> [--invite <code>]
+
+IF YOU ARE A HUMAN: re-run the same command with your username and emoji.
+MSG
     exit 1
   fi
   echo "▸ registering as $USERNAME on $SERVER ..."
