@@ -102,17 +102,18 @@ h1 .accent { text-decoration: underline; text-decoration-color: var(--color-acce
 
 /* ---- the terminal demo: statusline + notch + tip ---- */
 .term { border-block: var(--rule-hair) solid var(--color-rule); padding-block: var(--space-sm); display: grid; gap: var(--space-2xs); max-width: 64ch; min-width: 0; }
-.term__line { margin: 0; min-width: 0; font-family: var(--font-mono); font-size: clamp(0.64rem, 2.3vw, 0.95rem); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.term__line { margin: 0; min-width: 0; font-family: var(--font-mono); font-size: clamp(0.64rem, 2.3vw, 0.95rem); white-space: nowrap; overflow: hidden; text-overflow: clip; contain: paint; }
 .hud-tag { color: var(--color-ink); font-weight: 700; }
 .bar { color: var(--color-rule); letter-spacing: -0.08em; }
 .bar__fill { color: var(--color-accent-dim); }
 .term__proj { color: var(--color-muted); }
 .term__line.meta, .term .meta { color: var(--color-neutral); }
 .feed { display: grid; gap: var(--space-xs); margin-top: var(--space-xs); }
-.feed p { margin: 0; min-width: 0; font-family: var(--font-mono); font-size: clamp(0.64rem, 2.3vw, 0.95rem); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.feed p { margin: 0; min-width: 0; font-family: var(--font-mono); font-size: clamp(0.64rem, 2.3vw, 0.95rem); white-space: nowrap; overflow: hidden; text-overflow: clip; contain: paint; }
 .dot--on  { color: var(--color-go); }
 .dot--off { color: var(--color-neutral); }
 .feed .meta { color: var(--color-neutral); }
+.feed .char-slot, .term .char-slot { line-height: 1.45; }
 .tip { margin: 0; }
 .tip2 { padding-left: 1.2ch; margin-bottom: var(--space-xs); border-bottom: var(--rule-hair) solid var(--color-rule); padding-bottom: var(--space-sm); }
 .tip .spin, .tip2 .crown { color: var(--color-accent); }
@@ -163,7 +164,7 @@ h1 .accent { text-decoration: underline; text-decoration-color: var(--color-acce
     <p class="term__line term__proj">side-quest</p>
     <p class="term__line meta">2 MCPs | 7 hooks</p>
     <div class="feed" aria-live="off">
-      <p><span class="dot--on" aria-hidden="true">●</span> 🛸 marco <span class="meta">(2.1M) ·</span> <span class="roll" data-pool='["fighting a flaky test","renaming everything again","arguing with TypeScript","gaslighting the linter"]'>fighting a flaky test</span> <span class="meta">(<span class="roll" data-pool='["todo-app-v9","definitely-the-last-rewrite","uber-for-pigeons"]'>todo-app-v9</span>)</span></p>
+      <p><span class="dot--on" aria-hidden="true">●</span> 🛸 marco <span class="meta">(2.1M) ·</span> <span class="roll" data-pool='["fighting a flaky test","renaming everything again","arguing with TypeScript","gaslighting the linter"]'>fighting a flaky test</span> <span class="meta">(<span class="roll" data-pool='["todo-app-v9","last-rewrite-i-swear","uber-for-pigeons"]'>todo-app-v9</span>)</span></p>
       <p><span class="dot--on" aria-hidden="true">●</span> 🌸 lisa <span class="meta">(812k) ·</span> <span class="roll" data-pool='["tuning the telegram alerts","teaching the bot sarcasm","debugging the cron job","arguing with a webhook"]'>tuning the telegram alerts</span> <span class="meta">(<span class="roll" data-pool='["tinder-for-plants","excuse-generator-9000","apartment-bot"]'>tinder-for-plants</span>)</span></p>
       <p><span class="dot--off" aria-hidden="true">○</span> 🐙 joao <span class="meta">(309k) · idle (<span class="roll" data-pool='["procrastination-engine","vibes-only","zine-gen"]'>procrastination-engine</span>) · 2h</span></p>
     </div>
