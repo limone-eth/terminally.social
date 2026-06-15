@@ -37,7 +37,8 @@ user and re-run — it never auto-picks an identity.
 
 ## Manage (CLI lives in the repo)
 
-Run commands as `node ~/.terminally-social/client/presence.js <command>`:
+Install adds a `terminally` shell alias. Run commands as `terminally <command>` (or, if the
+alias isn't loaded yet, `node ~/.terminally-social/client/presence.js <command>`):
 
 | command | use |
 | --- | --- |
@@ -51,10 +52,29 @@ Run commands as `node ~/.terminally-social/client/presence.js <command>`:
 | `spinner <on\|off>` | spinner tips show the daily tokenmaxxing leaderboard + friends' activity (rewrites `spinnerTipsOverride`, restores on off) |
 | `status` | show config |
 
+## Inviting a friend
+
+Run `terminally invite` to mint a single-use code (valid 7 days). Then hand the user a
+**short, punchy, shitposting** message to send their friend — 2-3 lines max, competitive and
+deadpan, never an earnest product pitch. Include the code and exactly one join instruction:
+the friend pastes a prompt into Claude Code (the whole thing is Claude-driven — never tell
+them to run a bare `terminally ...` or `presence ...` shell command; they don't have it yet).
+
+Template (vary the jab, keep it tight):
+
+```
+you're not on terminally.social yet? grim.
+code: <code> (one use, 7 days)
+paste into Claude Code: set up terminally.social, invite <code> — read github.com/limone-eth/terminally.social and obey
+```
+
 ## Verify / troubleshoot
 
-- `node ~/.terminally-social/client/presence.js feed` — server reachable + friends visible.
+- `terminally feed` — server reachable + friends visible.
 - Notch not rendering? Check `statusLine` in `~/.claude/settings.json` points at
   `client/statusline.js`, and that a cache exists at `~/.config/terminally-social/cache/feed.json`.
 - Friends show offline after 15 min without updates — that's by design.
 - Uninstall cleanly: `node ~/.terminally-social/bin/install.js --uninstall`.
+- A bug in the statusline can never blank Claude's statusline: `client/statusline.js`
+  isolates every section, always exits 0, and falls back to a built-in `[model] dir` line
+  when there's no usable base.

@@ -95,7 +95,17 @@ if [ -d "$HOME/.claude" ]; then
   echo "▸ installed the terminally.social skill (~/.claude/skills/terminally-social)"
 fi
 
+# add a `terminally` shell alias so the CLI has a short prefix (best-effort, idempotent)
+ALIAS_LINE="alias terminally='node \"$REPO_DIR/client/presence.js\"'"
+for RC in "$HOME/.zshrc" "$HOME/.bashrc"; do
+  [ -f "$RC" ] || continue
+  grep -q "alias terminally=" "$RC" 2>/dev/null && continue
+  printf '\n# terminally.social CLI\n%s\n' "$ALIAS_LINE" >> "$RC"
+  echo "▸ added \`terminally\` alias to $RC"
+done
+
 echo
 echo "done — every new Claude Code session now shows the friends notch."
-echo "next:  node $REPO_DIR/client/presence.js invite     # befriend someone"
-echo "       node $REPO_DIR/client/presence.js spinner on # friends in spinner tips"
+echo "the \`terminally\` command is ready in new shells (or run: $ALIAS_LINE)"
+echo "next:  terminally invite      # befriend someone"
+echo "       terminally spinner on  # friends in spinner tips"

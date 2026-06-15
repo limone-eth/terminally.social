@@ -36,7 +36,7 @@ Got an invite code from a friend? Append `--invite <code>`. Self-hosting? `--ser
 **If you are a Claude agent** setting this up for your user: read
 [`skills/terminally-social/SKILL.md`](skills/terminally-social/SKILL.md) — it is the canonical,
 deterministic install/manage flow. Ask the user for a username + emoji, run the bootstrap
-above, then suggest `presence invite` to befriend someone.
+above, then suggest `terminally invite` to befriend someone.
 
 ## Privacy model (read this first)
 
@@ -50,11 +50,11 @@ The whole point of this project is that **your raw prompts never leave your mach
 - The summarizer is ~60 lines of dependency-free code, specifically so anyone can audit the
   single place where prompt-derived text crosses the privacy boundary.
 - You choose a sharing tier: `summary` (default), `project` (folder name only), or `off`.
-  `presence ghost on` pauses sharing instantly. Server-side length/charset enforcement exists
+  `terminally ghost on` pauses sharing instantly. Server-side length/charset enforcement exists
   too, but it is defense in depth — the privacy layer is local.
 
 Heuristic redaction can't be perfect. If your prompts routinely contain sensitive prose,
-run `presence share project`.
+run `terminally share project`.
 
 ## How it works
 
@@ -73,10 +73,12 @@ your machine                                server (self-hosted)
 
 - **Server** (`server/`): a single plain-Node HTTP file backed by libSQL — run it anywhere
   (a Turso database + any small host works). No framework, one dependency total.
-- **Client** (`client/`): zero dependencies. A CLI (`presence.js`), the hook, the summarizer,
-  and a statusline wrapper that renders your existing statusline (e.g. claude-hud) and appends
-  the friends line from a cache file. Network refresh happens in a detached background process,
-  so statusline rendering stays instant.
+- **Client** (`client/`): zero dependencies. A CLI (the `terminally` command, backed by
+  `client/presence.js`), the hook, the summarizer, and a statusline wrapper that renders your
+  existing statusline (e.g. claude-hud) and appends the friends line from a cache file. Network
+  refresh happens in a detached background process, so statusline rendering stays instant. The
+  wrapper is defensive by design: a bug in it can never blank your statusline — every section is
+  isolated, it always exits 0, and it falls back to a built-in `[model] dir` line.
 
 ## Try the sandbox (no real friends required)
 
@@ -103,13 +105,28 @@ node client/presence.js share project
 1. **Host the server**: deploy `server/` with `LIBSQL_URL` (+ `LIBSQL_AUTH_TOKEN`) pointing at a
    Turso database, or run it on any box you and your friends can reach.
 2. **Register**: `node client/presence.js register <name> --emoji 🦊 --server https://your-server`
-3. **Befriend**: you run `presence invite`, your friend runs `presence add <code>`. Invites are
+3. **Wire into Claude Code**: `npm run install-client` — backs up `~/.claude/settings.json`,
+   keeps your current statusline as the base layer, adds the hooks, and installs a `terminally`
+   shell alias. Undo anytime with `node bin/install.js --uninstall`.
+4. **Befriend**: run `terminally invite` and send the code to a friend (see below). Invites are
    single-use and expire in 7 days.
-4. **Wire into Claude Code**: `npm run install-client` — backs up `~/.claude/settings.json`,
-   keeps your current statusline as the base layer, and adds the presence hooks.
-   Undo anytime with `node bin/install.js --uninstall`.
+
+## Inviting a friend
+
+Run `terminally invite` to mint a single-use code. The whole flow is Claude-driven, so your
+friend doesn't run shell commands — they just paste a prompt into Claude Code:
+
+```
+set up terminally.social, invite <code> — read github.com/limone-eth/terminally.social and obey
+```
+
+That one prompt installs terminally.social for them (if needed) and connects you. Already set
+up? `terminally add <code>` works too. There is no username search or directory — connecting
+only ever happens through a code one of you chose to share.
 
 ## CLI reference
+
+Use the `terminally` alias (added on install) or `node ~/.terminally-social/client/presence.js <command>`.
 
 | command | what it does |
 | --- | --- |
@@ -126,7 +143,7 @@ node client/presence.js share project
 ## Tokenmaxxing — the daily match
 
 Every friend's notch line also shows how many tokens they have burned today
-(`· 2.1M tok`), summed across their sessions. The hook counts tokens locally from the
+(`🛸 marco (2.1M)`), summed across their sessions. The hook counts tokens locally from the
 session transcript on every Stop and sends **only the number** — never any content.
 The spinner tip then becomes the daily leaderboard:
 
@@ -138,7 +155,7 @@ Days roll over at midnight UTC. The crown is honor only. For now.
 
 ## Spinner tips
 
-`presence spinner on` also rotates friends' activity through Claude Code's spinner tips —
+`terminally spinner on` also rotates friends' activity through Claude Code's spinner tips —
 the text shown while Claude is working:
 
 ```
@@ -148,7 +165,7 @@ the text shown while Claude is working:
 Claude Code has no script interface for the spinner, so this works by rewriting
 `spinnerTipsOverride` in `~/.claude/settings.json` on each feed refresh (settings hot-reload).
 It is opt-in, writes atomically and only when the tips changed, never creates the file, keeps
-your `excludeDefault` preference, and `presence spinner off` restores whatever tips you had
+your `excludeDefault` preference, and `terminally spinner off` restores whatever tips you had
 before. Default tips still rotate alongside unless you've set `excludeDefault: true`.
 
 ## Staying up to date

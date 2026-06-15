@@ -23,7 +23,7 @@ const { positional, flags } = parseArgs(rest)
 function requireConfig() {
   const config = loadConfig()
   if (!config?.token) {
-    console.error('not registered yet — run: presence register <username> --server <url>')
+    console.error('not registered yet — run: terminally register <username> --server <url>')
     process.exit(1)
   }
   return config
@@ -47,7 +47,7 @@ async function main() {
       const username = positional[0]
       const server = flags.server || loadConfig()?.server
       if (!username || !server) {
-        console.error('usage: presence register <username> [--emoji 🦊] --server <url>')
+        console.error('usage: terminally register <username> [--emoji 🦊] --server <url>')
         process.exit(1)
       }
       const config = { server: server.replace(/\/+$/, ''), share: 'summary', ghost: false }
@@ -78,7 +78,7 @@ async function main() {
       const config = requireConfig()
       const invite = await api(config, 'POST', '/v1/invites')
       console.log(`invite code: ${invite.code}`)
-      console.log('send it to a friend — they run: presence add ' + invite.code)
+      console.log(`give it to a friend — they paste into Claude Code: "add me on terminally.social, invite ${invite.code}"`)
       console.log('(single use, expires in 7 days)')
       break
     }
@@ -86,7 +86,7 @@ async function main() {
     case 'add': {
       const config = requireConfig()
       if (!positional[0]) {
-        console.error('usage: presence add <code>')
+        console.error('usage: terminally add <code>')
         process.exit(1)
       }
       const result = await api(config, 'POST', '/v1/friends', { code: positional[0] })
@@ -97,7 +97,7 @@ async function main() {
     case 'friends': {
       const config = requireConfig()
       const { friends } = await api(config, 'GET', '/v1/friends')
-      if (friends.length === 0) console.log('no friends yet — run: presence invite')
+      if (friends.length === 0) console.log('no friends yet — run: terminally invite')
       for (const f of friends) console.log(`${f.emoji} ${f.username}`)
       break
     }
@@ -105,7 +105,7 @@ async function main() {
     case 'remove': {
       const config = requireConfig()
       if (!positional[0]) {
-        console.error('usage: presence remove <username>')
+        console.error('usage: terminally remove <username>')
         process.exit(1)
       }
       await api(config, 'DELETE', `/v1/friends/${encodeURIComponent(positional[0])}`)
@@ -116,7 +116,7 @@ async function main() {
     case 'feed': {
       const config = requireConfig()
       const { feed } = await api(config, 'GET', '/v1/feed')
-      if (feed.length === 0) console.log('no friends yet — run: presence invite')
+      if (feed.length === 0) console.log('no friends yet — run: terminally invite')
       for (const f of feed) {
         const tok = fmtTokens(f.tokens_today)
         const parts = [`${STATUS_ICON[f.status]} ${f.emoji} ${f.username}${tok ? ` (${tok})` : ''}`]
@@ -146,7 +146,7 @@ async function main() {
     case 'spinner': {
       const config = requireConfig()
       if (!['on', 'off'].includes(positional[0])) {
-        console.error('usage: presence spinner <on|off>')
+        console.error('usage: terminally spinner <on|off>')
         process.exit(1)
       }
       if (positional[0] === 'on') {
@@ -180,7 +180,7 @@ async function main() {
       const config = requireConfig()
       const tier = positional[0]
       if (!['summary', 'project', 'off'].includes(tier)) {
-        console.error('usage: presence share <summary|project|off>')
+        console.error('usage: terminally share <summary|project|off>')
         process.exit(1)
       }
       saveConfig({ ...config, share: tier })
@@ -192,7 +192,7 @@ async function main() {
       const config = requireConfig()
       const on = positional[0] === 'on'
       if (!['on', 'off'].includes(positional[0])) {
-        console.error('usage: presence ghost <on|off>')
+        console.error('usage: terminally ghost <on|off>')
         process.exit(1)
       }
       saveConfig({ ...config, ghost: on })
@@ -215,7 +215,7 @@ async function main() {
     default:
       console.log(`terminally.social — see what your friends are building
 
-usage: presence <command>
+usage: terminally <command>
 
   register <username> [--emoji 🦊] --server <url>   create your identity
   profile [--emoji 🦊] [--username name]            view or edit your profile
