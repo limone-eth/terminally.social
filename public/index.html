@@ -62,14 +62,15 @@ a:hover { text-decoration-color: var(--color-accent); }
 
 /* ---- scrollable top: product description, hugs the footer, scrolls only on overflow ---- */
 .scroll { overflow-y: auto; display: flex; flex-direction: column; padding: clamp(1.1rem, 3.5vw, 2.25rem) clamp(1.1rem, 4vw, 2.5rem) clamp(1rem, 2.5vh, 1.6rem); min-height: 0; }
-.scroll__inner { margin-top: auto; display: grid; gap: clamp(0.3rem, 0.8vh, 0.55rem); min-width: 0; }
+.scroll__inner { margin-top: auto; display: grid; gap: clamp(0.5rem, 1.3vh, 0.85rem); min-width: 0; line-height: 1.45; }
 .scroll__inner > * { min-width: 0; margin: 0; }
 /* the user question — typed in first, styled like the Claude Code input box */
 .usr { color: var(--term-ink); font-weight: 400; overflow-wrap: anywhere; background: color-mix(in oklch, var(--term-ink) 9%, transparent); border-radius: 6px; padding: 0.5em 1ch; }
 .usr::before { content: "> "; color: var(--term-neutral); }
 .qcaret { width: 1ch; }
 /* the assistant answer — types in line by line after the question */
-.answer { display: grid; gap: clamp(0.3rem, 0.8vh, 0.55rem); }
+.answer { display: grid; gap: clamp(0.5rem, 1.3vh, 0.85rem); }
+.answer > * { margin: 0; }
 .answer > * { display: none; }
 .answer > *.shown { display: block; }
 .typecaret { display: inline-block; width: 1ch; }
@@ -98,18 +99,23 @@ a:hover { text-decoration-color: var(--color-accent); }
 .crown { color: var(--term-accent); }
 .char-slot { line-height: 1.5; }
 
-/* the one action — the install input box (top rule only; bottom line is the statusline divider) */
+/* the one action — the input box. Two tabs swap the prompt; the box is click-to-copy.
+   (top rule only; the box's bottom line is the statusline divider) */
 .install { display: grid; gap: var(--space-2xs); }
-.install__label { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: none; border: none; padding: 0; color: var(--term-accent); cursor: pointer; text-align: left; justify-self: start; font-family: var(--font-mono); }
-.install__label:hover .copy__label { text-decoration: underline; text-underline-offset: 4px; }
-.install__label:active { transform: translateY(1px); }
-.install__box { border-top: var(--rule-hair) solid var(--term-rule); padding: var(--space-sm) 0 0; }
+.install__tabs { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 1.4ch; margin: 0; font-size: var(--text-xs); letter-spacing: 0.1em; text-transform: uppercase; }
+.tab { font: inherit; letter-spacing: inherit; text-transform: inherit; background: none; border: none; padding: 0; cursor: pointer; color: var(--term-neutral); font-weight: 700; }
+.tab.is-active { color: var(--term-accent); }
+.tab:not(.is-active):hover { color: var(--term-ink); }
+.install__hint { margin-left: auto; color: var(--term-neutral); cursor: pointer; }
+.install__hint:hover { color: var(--term-ink); }
+.install__box { display: block; width: 100%; text-align: left; font: inherit; color: var(--term-ink); background: none; border: none; border-top: var(--rule-hair) solid var(--term-rule); padding: var(--space-sm) 0 0; cursor: pointer; }
+.install__box:active { transform: translateY(1px); }
 .install__line { margin: 0; line-height: 1.65; color: var(--term-ink); overflow-wrap: anywhere; }
 .install__line .prompt { color: var(--term-accent); user-select: none; }
 .install__line .nb { white-space: nowrap; }
 .caret { display: inline-block; width: 1ch; color: var(--term-accent); animation: blink 1.05s steps(2) infinite; }
 @keyframes blink { 50% { opacity: 0; } }
-@media (pointer: coarse) { .install__label { min-height: 44px; } }
+@media (pointer: coarse) { .tab { min-height: 32px; } }
 
 /* the statusline proper — divider on top (inset, shared with install bottom), then the HUD + feed */
 .status { border-top: var(--rule-hair) solid var(--term-rule); padding-top: var(--space-sm); display: grid; gap: 3px; }
@@ -155,10 +161,14 @@ a:hover { text-decoration-color: var(--color-accent); }
     </div>
 
     <div class="install" id="install">
-      <button class="install__label copy" data-copy="My friends are tokenmaxxing without me. Set up terminally.social for me: read the README at https://github.com/limone-eth/terminally.social and obey."><span class="copy__label">install · copy/paste into claude code</span> ↓</button>
-      <div class="install__box">
-        <p class="install__line"><span class="prompt">❯ </span>My friends are tokenmaxxing without me. Set up terminally.social for me: read the README at <span class="nb">github.com/limone-eth/terminally.social</span> and obey.<span class="caret" aria-hidden="true">▮</span></p>
-      </div>
+      <p class="install__tabs">
+        <button class="tab is-active" data-mode="install">install</button>
+        <button class="tab" data-mode="invite">invite a friend</button>
+        <span class="install__hint">copy/paste into claude code ↓</span>
+      </p>
+      <button class="install__box" id="copyBox" aria-label="Copy the prompt to your clipboard">
+        <p class="install__line"><span class="prompt">❯ </span><span class="ptext">My friends are tokenmaxxing without me. Set up terminally.social for me: read the README at <span class="nb">github.com/limone-eth/terminally.social</span> and obey.</span><span class="caret" aria-hidden="true">▮</span></p>
+      </button>
     </div>
 
     <div class="status">
@@ -227,26 +237,44 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
   }
 })()
 
-// copy button
-const btn = document.querySelector('.copy')
-const label = btn.querySelector('.copy__label')
-const labelText = matchMedia('(max-width: 40rem)').matches ? 'install · copy this' : label.textContent
-label.textContent = labelText
-let flashCopied = () => {
-  label.textContent = 'copied ✓'
-  setTimeout(() => { label.textContent = labelText }, 1800)
+// install / invite tabs — swap the prompt; the box is click-to-copy
+const PROMPTS = {
+  install: {
+    html: 'My friends are tokenmaxxing without me. Set up terminally.social for me: read the README at <span class="nb">github.com/limone-eth/terminally.social</span> and obey.',
+    copy: 'My friends are tokenmaxxing without me. Set up terminally.social for me: read the README at https://github.com/limone-eth/terminally.social and obey.',
+  },
+  invite: {
+    html: "I'm on terminally.social and want to add a friend. Create a single-use invite code for me, then write a short message I can send them with it.",
+    copy: "I'm on terminally.social and want to add a friend. Create a single-use invite code for me, then write a short message I can send them with it.",
+  },
 }
-btn.addEventListener('click', async () => {
-  try { await navigator.clipboard.writeText(btn.dataset.copy) } catch {}
+const tabs = [...document.querySelectorAll('.tab')]
+const ptext = document.querySelector('.ptext')
+const copyBox = document.getElementById('copyBox')
+const hint = document.querySelector('.install__hint')
+const hintText = matchMedia('(max-width: 40rem)').matches ? 'tap to copy ↓' : 'copy/paste into claude code ↓'
+hint.textContent = hintText
+let mode = 'install'
+const setMode = (m) => {
+  mode = m
+  tabs.forEach((t) => t.classList.toggle('is-active', t.dataset.mode === m))
+  ptext.innerHTML = PROMPTS[m].html
+}
+tabs.forEach((t) => t.addEventListener('click', () => setMode(t.dataset.mode)))
+let flashCopied = () => { hint.textContent = 'copied ✓'; setTimeout(() => { hint.textContent = hintText }, 1600) }
+const doCopy = async () => {
+  try { await navigator.clipboard.writeText(PROMPTS[mode].copy) } catch {}
   flashCopied()
-})
+}
+copyBox.addEventListener('click', doCopy)
+hint.addEventListener('click', doCopy)
 
 // slot-text rolls + live counters
 if (!reduced) {
   try {
     const { slotText } = await import('https://esm.sh/slot-text@0.2.2')
-    const copyCtl = slotText(label, labelText)
-    flashCopied = () => copyCtl.flash('copied ✓', { revertAfter: 1800, enter: { direction: 'up' }, exit: { direction: 'down' } })
+    const hintCtl = slotText(hint, hintText)
+    flashCopied = () => hintCtl.flash('copied ✓', { revertAfter: 1600, enter: { direction: 'up' }, exit: { direction: 'down' } })
 
     const rolls = [...document.querySelectorAll('.roll')].map((el) => ({
       ctl: slotText(el, el.textContent.trim()),
