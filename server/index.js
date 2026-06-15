@@ -259,6 +259,35 @@ async function recordUsage(user, body) {
   return [200, { ok: true }]
 }
 
+async function getStats(req) {
+  const now = Date.now()
+  const [users, today, presence, friendships, tokens] = await Promise.all([
+    db.execute('SELECT COUNT(*) AS c FROM users'),
+    db.execute({ sql: 'SELECT COUNT(*) AS c FROM users WHERE created_at >= ?', args: [now - 24 * 60 * 60 * 1000] }),
+    db.execute({ sql: 'SELECT COUNT(*) AS c FROM presence WHERE updated_at > ?', args: [now - OFFLINE_AFTER_MS] }),
+    db.execute('SELECT COUNT(*) AS c FROM friendships'),
+    db.execute({ sql: 'SELECT COALESCE(SUM(tokens), 0) AS c FROM usage WHERE day = ?', args: [utcDay()] }),
+  ])
+  const stats = {
+    users: Number(users.rows[0].c),
+    users_today: Number(today.rows[0].c),
+    presence_active: Number(presence.rows[0].c),
+    friendships: Number(friendships.rows[0].c),
+    tokens_today: Number(tokens.rows[0].c),
+  }
+  // The install roster is gated behind a valid token — registering shares your
+  // presence with friends, not your existence with the whole internet. The
+  // counts above are anonymous and safe to serve publicly.
+  const user = await authenticate(req)
+  if (user) {
+    const roster = await db.execute(
+      'SELECT username, emoji, created_at FROM users ORDER BY created_at DESC LIMIT 200',
+    )
+    stats.recent = roster.rows.map((r) => ({ username: r.username, emoji: r.emoji, created_at: r.created_at }))
+  }
+  return [200, stats]
+}
+
 async function getFeed(user) {
   const result = await db.execute({
     sql: `SELECT u.id AS user_id, u.username, u.emoji, p.status, p.project, p.summary, p.updated_at
@@ -293,6 +322,9 @@ export async function handler(req, res) {
         const [status, body] = await registerUser(await readBody(req))
         return json(res, status, body)
       }
+
+      // Public counts; roster fields only when a valid token is supplied.
+      if (route === 'GET /v1/stats') return json(res, ...(await getStats(req)))
 
       const user = await authenticate(req)
       if (!user) return json(res, 401, { error: 'missing or invalid token' })

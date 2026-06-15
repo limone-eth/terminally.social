@@ -156,3 +156,24 @@ test('unfriending removes feed access', async () => {
   const feed = await call('GET', '/v1/feed', { token: bob.token })
   assert.deepEqual(feed.body.feed, [])
 })
+
+test('stats: public counts without a token, no roster', async () => {
+  const res = await call('GET', '/v1/stats')
+  assert.equal(res.status, 200)
+  assert.equal(res.body.users, 2) // alice + bob
+  assert.equal(typeof res.body.users_today, 'number')
+  assert.equal(typeof res.body.presence_active, 'number')
+  assert.equal(typeof res.body.tokens_today, 'number')
+  // roster must NOT leak to unauthenticated callers
+  assert.equal(res.body.recent, undefined)
+})
+
+test('stats: roster included only with a valid token', async () => {
+  const res = await call('GET', '/v1/stats', { token: alice.token })
+  assert.equal(res.status, 200)
+  assert.ok(Array.isArray(res.body.recent))
+  const names = res.body.recent.map((r) => r.username).sort()
+  assert.deepEqual(names, ['alice', 'bobby']) // bob was renamed to bobby earlier
+  // never expose token hashes or ids
+  assert.ok(res.body.recent.every((r) => !('token_hash' in r) && !('id' in r)))
+})
