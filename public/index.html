@@ -112,6 +112,7 @@ a:hover { text-decoration-color: var(--color-accent); }
 .install__line { margin: 0; line-height: 1.65; color: var(--term-ink); overflow-wrap: anywhere; }
 .install__line .prompt { color: var(--term-accent); user-select: none; }
 .install__line .nb { white-space: nowrap; }
+.install__line .cmd { color: oklch(82% 0.09 230); }
 .caret { display: inline-block; width: 1ch; color: var(--term-accent); animation: blink 1.05s steps(2) infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 @media (pointer: coarse) { .tab { min-height: 32px; } }
@@ -166,7 +167,7 @@ a:hover { text-decoration-color: var(--color-accent); }
         <span class="install__hint">copy/paste into claude code ↓</span>
       </p>
       <button class="install__box" id="copyBox" aria-label="Copy the prompt to your clipboard">
-        <p class="install__line"><span class="prompt">❯ </span><span class="ptext">My friends are tokenmaxxing without me. Set up terminally.social for me: read the README at <span class="nb">github.com/limone-eth/terminally.social</span> and obey.</span><span class="caret" aria-hidden="true">▮</span></p>
+        <p class="install__line"><span class="prompt">❯ </span><span class="ptext">My friends are tokenmaxxing without me. Install terminally.social: run <span class="cmd">curl -fsSL https://terminally.social/install | bash</span> — it'll tell you what to ask me. Then add me to the leaderboard.</span><span class="caret" aria-hidden="true">▮</span></p>
       </button>
     </div>
 
@@ -239,8 +240,8 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
 // install / invite tabs — swap the prompt; the box is click-to-copy
 const PROMPTS = {
   install: {
-    html: 'My friends are tokenmaxxing without me. Set up terminally.social for me: read the README at <span class="nb">github.com/limone-eth/terminally.social</span> and obey.',
-    copy: 'My friends are tokenmaxxing without me. Set up terminally.social for me: read the README at https://github.com/limone-eth/terminally.social and obey.',
+    html: 'My friends are tokenmaxxing without me. Install terminally.social: run <span class="cmd">curl -fsSL https://terminally.social/install | bash</span> — it\'ll tell you what to ask me. Then add me to the leaderboard.',
+    copy: "My friends are tokenmaxxing without me. Install terminally.social: run curl -fsSL https://terminally.social/install | bash — it'll tell you what to ask me. Then add me to the leaderboard.",
   },
   invite: {
     html: "I'm on terminally.social and want to add a friend. Create a single-use invite code for me, then write a short message I can send them with it.",
