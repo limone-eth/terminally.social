@@ -160,7 +160,9 @@ async function main() {
         saveConfig({
           ...config,
           spinner_tips: true,
-          spinner_tips_backup: settings.spinnerTipsOverride ?? null,
+          // don't re-capture on a second `spinner on` — settings.spinnerTipsOverride
+          // is now OUR tips, and saving that as the backup would destroy the user's original
+          spinner_tips_backup: config.spinner_tips ? config.spinner_tips_backup : (settings.spinnerTipsOverride ?? null),
         })
         const { feed, me } = await api(config, 'GET', '/v1/feed')
         writeCache(feed, me)
@@ -168,7 +170,12 @@ async function main() {
         console.log("spinner tips on — friends' activity now rotates through Claude Code's spinner tips")
         console.log(`(writes spinnerTipsOverride in ${SETTINGS_PATH} on each feed refresh)`)
       } else {
-        clearSpinnerTips(config.spinner_tips_backup || null)
+        try {
+          clearSpinnerTips(config.spinner_tips_backup || null)
+        } catch (e) {
+          console.error('could not restore previous spinner settings: ' + e.message)
+        }
+        // clear our config flags regardless, so state never desyncs from settings.json
         const { spinner_tips_backup, ...rest } = config
         saveConfig({ ...rest, spinner_tips: false })
         console.log('spinner tips off — previous spinner settings restored')

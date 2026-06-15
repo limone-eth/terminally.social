@@ -9,7 +9,7 @@ const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'terminally.social-test-'))
 process.env.LIBSQL_URL = `file:${path.join(tmp, 'test.db')}`
 
 const { createApp } = await import('../server/index.js')
-const { init } = await import('../server/db.js')
+const { init, db } = await import('../server/db.js')
 
 await init()
 const server = createApp().listen(0)
@@ -131,6 +131,23 @@ test('usage aggregates per day into the feed', async () => {
 
   const bad = await call('POST', '/v1/usage', { token: bob.token, body: { session_id: 's9', tokens: -5 } })
   assert.equal(bad.status, 400)
+})
+
+test('tokens_today counts only today for a session spanning midnight UTC', async () => {
+  const yesterday = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10)
+  // alice's "overnight" session already logged 1.0M before midnight (yesterday's row)
+  await db.execute({
+    sql: 'INSERT INTO usage (user_id, session_id, day, tokens, updated_at) VALUES (?, ?, ?, ?, ?)',
+    args: [alice.id, 'overnight', yesterday, 1_000_000, Date.now()],
+  })
+  // she keeps working in the SAME session past midnight; client re-posts the absolute total (1.2M)
+  await call('POST', '/v1/usage', { token: alice.token, body: { session_id: 'overnight', tokens: 1_200_000 } })
+
+  const feed = await call('GET', '/v1/feed', { token: bob.token })
+  const entry = feed.body.feed.find((f) => f.username === 'alice')
+  // only the 0.2M burned today is added, not the full 1.2M:
+  // 800k (s1) + 200k (s2) + 200k (overnight today) = 1.2M  (the bug would give 2.2M)
+  assert.equal(entry.tokens_today, 1_200_000)
 })
 
 test('unfriending removes feed access', async () => {

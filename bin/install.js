@@ -31,10 +31,18 @@ if (!uninstall && !config?.token) {
   process.exit(1)
 }
 
-const settings = JSON.parse(fs.readFileSync(SETTINGS_PATH, 'utf8'))
-const backupPath = `${SETTINGS_PATH}.terminally-social-backup-${Date.now()}`
-fs.copyFileSync(SETTINGS_PATH, backupPath)
-console.log(`backup: ${backupPath}`)
+// A brand-new Claude Code install may have no settings.json yet — start fresh
+// rather than crashing (which would abort bootstrap.sh under `set -euo pipefail`).
+let settings = {}
+if (fs.existsSync(SETTINGS_PATH)) {
+  settings = JSON.parse(fs.readFileSync(SETTINGS_PATH, 'utf8'))
+  const backupPath = `${SETTINGS_PATH}.terminally-social-backup-${Date.now()}`
+  fs.copyFileSync(SETTINGS_PATH, backupPath)
+  console.log(`backup: ${backupPath}`)
+} else if (!uninstall) {
+  fs.mkdirSync(path.dirname(SETTINGS_PATH), { recursive: true })
+  console.log('no existing settings.json — creating a new one')
+}
 
 if (uninstall) {
   if (settings.statusLine?.command === STATUSLINE_CMD && config?.base_statusline) {

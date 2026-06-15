@@ -158,12 +158,19 @@ async function acceptInvite(user, body) {
   }
   if (invite.user_id === user.id) return [400, { error: 'cannot accept your own invite' }]
 
+  // Atomically claim the invite — only one concurrent accept can win this UPDATE,
+  // so a single-use code can never create two friendships / be redeemed twice.
+  const claim = await db.execute({
+    sql: 'UPDATE invites SET used_by = ? WHERE code = ? AND used_by IS NULL AND expires_at >= ?',
+    args: [user.id, code, Date.now()],
+  })
+  if (!claim.rowsAffected) return [404, { error: 'invite not found, expired, or already used' }]
+
   const [a, b] = pair(user.id, invite.user_id)
   await db.execute({
     sql: 'INSERT OR IGNORE INTO friendships (user_a, user_b, created_at) VALUES (?, ?, ?)',
     args: [a, b, Date.now()],
   })
-  await db.execute({ sql: 'UPDATE invites SET used_by = ? WHERE code = ?', args: [user.id, code] })
   const friend = await db.execute({
     sql: 'SELECT username, emoji FROM users WHERE id = ?',
     args: [invite.user_id],
@@ -232,11 +239,22 @@ async function recordUsage(user, body) {
   if (!Number.isFinite(tokens) || tokens < 0 || tokens > 1e10) {
     return [400, { error: 'tokens must be a non-negative number' }]
   }
+  // The client posts the session's ABSOLUTE cumulative total each Stop. Store the
+  // per-day delta, so a session left open across midnight UTC doesn't recount the
+  // tokens it already burned on earlier days as "today": today's row = current
+  // total minus everything this session already logged on prior days.
+  const day = utcDay()
+  const prior = await db.execute({
+    sql: 'SELECT COALESCE(SUM(tokens), 0) AS prior FROM usage WHERE user_id = ? AND session_id = ? AND day < ?',
+    args: [user.id, sessionId, day],
+  })
+  const priorTotal = Number(prior.rows[0]?.prior) || 0
+  const todayDelta = Math.max(0, Math.round(tokens) - priorTotal)
   await db.execute({
     sql: `INSERT INTO usage (user_id, session_id, day, tokens, updated_at) VALUES (?, ?, ?, ?, ?)
           ON CONFLICT (user_id, session_id, day) DO UPDATE SET
             tokens = excluded.tokens, updated_at = excluded.updated_at`,
-    args: [user.id, sessionId, utcDay(), Math.round(tokens), Date.now()],
+    args: [user.id, sessionId, day, todayDelta, Date.now()],
   })
   return [200, { ok: true }]
 }

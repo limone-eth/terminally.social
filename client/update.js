@@ -24,10 +24,13 @@ export function maybeSelfUpdate() {
     if (Date.now() - last < EVERY_MS) return false
     fs.mkdirSync(path.dirname(STAMP), { recursive: true })
     fs.writeFileSync(STAMP, new Date().toISOString() + '\n')
-    spawn('bash', ['-c', `git -C "${root}" pull --ff-only --quiet && npm --prefix "${root}" install --omit=dev --silent --no-audit --no-fund`], {
-      detached: true,
-      stdio: 'ignore',
-    }).unref()
+    // Pass the repo path as a positional arg ($0), never interpolated into the
+    // command string — so an install path with shell metacharacters can't inject.
+    spawn(
+      'bash',
+      ['-c', 'git -C "$0" pull --ff-only --quiet && npm --prefix "$0" install --omit=dev --silent --no-audit --no-fund', root],
+      { detached: true, stdio: 'ignore' }
+    ).unref()
     return true
   } catch {
     return false

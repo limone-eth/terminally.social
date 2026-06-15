@@ -8,3 +8,10 @@ skills/impeccable/
 .agents/
 .claude/
 .impeccable/
+
+# local launch-video tooling (HyperFrames project, renders, venv)
+videos/
+
+# installed third-party agent skills — keep only terminally.social's own skill
+skills/*
+!skills/terminally-social/
