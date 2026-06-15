@@ -239,11 +239,22 @@ async function recordUsage(user, body) {
   if (!Number.isFinite(tokens) || tokens < 0 || tokens > 1e10) {
     return [400, { error: 'tokens must be a non-negative number' }]
   }
+  // The client posts the session's ABSOLUTE cumulative total each Stop. Store the
+  // per-day delta, so a session left open across midnight UTC doesn't recount the
+  // tokens it already burned on earlier days as "today": today's row = current
+  // total minus everything this session already logged on prior days.
+  const day = utcDay()
+  const prior = await db.execute({
+    sql: 'SELECT COALESCE(SUM(tokens), 0) AS prior FROM usage WHERE user_id = ? AND session_id = ? AND day < ?',
+    args: [user.id, sessionId, day],
+  })
+  const priorTotal = Number(prior.rows[0]?.prior) || 0
+  const todayDelta = Math.max(0, Math.round(tokens) - priorTotal)
   await db.execute({
     sql: `INSERT INTO usage (user_id, session_id, day, tokens, updated_at) VALUES (?, ?, ?, ?, ?)
           ON CONFLICT (user_id, session_id, day) DO UPDATE SET
             tokens = excluded.tokens, updated_at = excluded.updated_at`,
-    args: [user.id, sessionId, utcDay(), Math.round(tokens), Date.now()],
+    args: [user.id, sessionId, day, todayDelta, Date.now()],
   })
   return [200, { ok: true }]
 }

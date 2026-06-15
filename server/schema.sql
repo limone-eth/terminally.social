@@ -32,8 +32,10 @@ CREATE TABLE IF NOT EXISTS presence (
   updated_at INTEGER NOT NULL
 );
 
--- per-session daily token usage — tokens is the absolute total for that
--- session, re-posted by the client on each Stop (counts only, never content)
+-- per-session daily token usage — tokens is that session's portion burned ON
+-- this UTC day (a delta the server derives from the absolute total the client
+-- re-posts each Stop), so SUM(tokens) WHERE day = today is the true daily count
+-- even for a session that spans midnight (counts only, never content)
 CREATE TABLE IF NOT EXISTS usage (
   user_id TEXT NOT NULL REFERENCES users(id),
   session_id TEXT NOT NULL,
