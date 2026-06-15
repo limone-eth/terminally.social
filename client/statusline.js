@@ -4,6 +4,11 @@
 // first (config.base_statusline, e.g. claude-hud), then appends one line of
 // friends' presence.
 //
+// Robustness contract: this script must NEVER blank your statusline. Every
+// section is isolated in its own try/catch, it always exits 0, and if there
+// is no usable base statusline it falls back to a built-in `[model] dir`
+// line — so a bug here can only ever ADD a line, never remove yours.
+//
 // Statuslines re-render constantly, so this never does network I/O inline:
 // it renders from the cache file and, when the cache is stale, spawns a
 // detached `presence pull` that refreshes it for the next render.
@@ -52,6 +57,21 @@ function renderFeed(feed) {
   return shown.join(`${DIM}  |  ${RESET}`)
 }
 
+// Minimal built-in statusline, used only when there is no usable base.
+// Guarantees the line is never empty even on a fresh install with no base.
+function renderBuiltinBase(input) {
+  let data
+  try { data = JSON.parse(input) } catch { return null }
+  if (!data || typeof data !== 'object') return null
+  const model = data.model?.display_name || data.model?.id || ''
+  const dir = data.workspace?.current_dir || data.workspace?.project_dir || data.cwd || ''
+  const base = dir ? path.basename(dir) : ''
+  const parts = []
+  if (model) parts.push(`${DIM}[${RESET}${model}${DIM}]${RESET}`)
+  if (base) parts.push(base)
+  return parts.length ? parts.join(' ') : null
+}
+
 async function readStdin() {
   if (process.stdin.isTTY) return ''
   const chunks = []
@@ -68,23 +88,42 @@ function refreshInBackground() {
   }).unref()
 }
 
-const input = await readStdin()
-const config = loadConfig()
+async function main() {
+  const input = await readStdin().catch(() => '')
+  let config = null
+  try { config = loadConfig() } catch { /* loadConfig is already guarded, but be safe */ }
 
-// 1. render the base statusline (e.g. claude-hud) with the same stdin
-if (config?.base_statusline) {
-  const base = spawnSync('bash', ['-c', config.base_statusline], {
-    input,
-    encoding: 'utf8',
-    timeout: 5000,
-  })
-  if (base.stdout) process.stdout.write(base.stdout.replace(/\n$/, '') + '\n')
+  // 1. Base statusline — must always produce a line. Never recurse into our
+  //    own statusline (a stale or self-referential base would loop or hang).
+  let baseRendered = false
+  try {
+    const base = config?.base_statusline
+    if (base && !/statusline\.js/.test(base)) {
+      const r = spawnSync('bash', ['-c', base], { input, encoding: 'utf8', timeout: 5000 })
+      if (r.stdout && r.stdout.trim()) {
+        process.stdout.write(r.stdout.replace(/\n$/, '') + '\n')
+        baseRendered = true
+      }
+    }
+  } catch { /* fall through to the built-in base */ }
+
+  if (!baseRendered) {
+    try {
+      const builtin = renderBuiltinBase(input)
+      if (builtin) process.stdout.write(builtin + '\n')
+    } catch { /* nothing else we can safely do */ }
+  }
+
+  // 2. Friends line — purely additive and fully isolated.
+  try {
+    if (config?.token) {
+      const cache = readCache()
+      if (!cache || Date.now() - cache.fetched_at > STALE_MS) refreshInBackground()
+      const line = renderFeed(cache?.feed)
+      if (line) process.stdout.write(line + '\n')
+    }
+  } catch { /* a friends-line failure must never affect the base */ }
 }
 
-// 2. append the friends line from cache
-if (config?.token) {
-  const cache = readCache()
-  if (!cache || Date.now() - cache.fetched_at > STALE_MS) refreshInBackground()
-  const line = renderFeed(cache?.feed)
-  if (line) process.stdout.write(line + '\n')
-}
+// Always succeed — a non-zero exit or uncaught throw blanks the statusline.
+main().then(() => process.exit(0)).catch(() => process.exit(0))

@@ -56,8 +56,12 @@ if (uninstall) {
 }
 
 // statusline: preserve the existing command as the base
+// NEVER capture our own statusline as the base (even from a different/old
+// install path) — that would make statusline.js shell into itself and loop,
+// blanking the line.
 const current = settings.statusLine?.command
-if (current && current !== STATUSLINE_CMD) {
+const currentIsOurs = current && /statusline\.js/.test(current)
+if (current && !currentIsOurs) {
   saveConfig({ ...config, base_statusline: current })
   console.log('existing statusline preserved as base_statusline')
 }
