@@ -158,12 +158,19 @@ async function acceptInvite(user, body) {
   }
   if (invite.user_id === user.id) return [400, { error: 'cannot accept your own invite' }]
 
+  // Atomically claim the invite — only one concurrent accept can win this UPDATE,
+  // so a single-use code can never create two friendships / be redeemed twice.
+  const claim = await db.execute({
+    sql: 'UPDATE invites SET used_by = ? WHERE code = ? AND used_by IS NULL AND expires_at >= ?',
+    args: [user.id, code, Date.now()],
+  })
+  if (!claim.rowsAffected) return [404, { error: 'invite not found, expired, or already used' }]
+
   const [a, b] = pair(user.id, invite.user_id)
   await db.execute({
     sql: 'INSERT OR IGNORE INTO friendships (user_a, user_b, created_at) VALUES (?, ?, ?)',
     args: [a, b, Date.now()],
   })
-  await db.execute({ sql: 'UPDATE invites SET used_by = ? WHERE code = ?', args: [user.id, code] })
   const friend = await db.execute({
     sql: 'SELECT username, emoji FROM users WHERE id = ?',
     args: [invite.user_id],

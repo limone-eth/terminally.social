@@ -19,8 +19,10 @@ export function loadConfig() {
 }
 
 export function saveConfig(config) {
-  fs.mkdirSync(path.dirname(CONFIG_PATH), { recursive: true })
-  fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2) + '\n')
+  // config.json holds the bearer token — keep it private (dir 0700, file 0600)
+  fs.mkdirSync(path.dirname(CONFIG_PATH), { recursive: true, mode: 0o700 })
+  fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2) + '\n', { mode: 0o600 })
+  try { fs.chmodSync(CONFIG_PATH, 0o600) } catch { /* best effort: mode only applies on create */ }
 }
 
 export function readCache() {

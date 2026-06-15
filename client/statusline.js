@@ -14,12 +14,17 @@
 // detached `presence pull` that refreshes it for the next render.
 
 import { spawn, spawnSync } from 'node:child_process'
+import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { loadConfig, readCache, fmtTokens } from './lib.js'
+import { loadConfig, readCache, fmtTokens, HOME } from './lib.js'
 
 const STALE_MS = 30 * 1000
 const MAX_SHOWN = 4
+// statuslines re-render very frequently; without this guard a single stale
+// window spawns one detached `pull` per render until the cache is rewritten.
+const PULL_LOCK = path.join(HOME, 'cache', 'pull.lock')
+const PULL_LOCK_MS = 5000
 
 const DIM = '\x1b[2m'
 const RESET = '\x1b[0m'
@@ -80,6 +85,15 @@ async function readStdin() {
 }
 
 function refreshInBackground() {
+  // skip if a refresh was kicked off in the last few seconds (one in flight)
+  try {
+    const last = fs.statSync(PULL_LOCK).mtimeMs
+    if (Date.now() - last < PULL_LOCK_MS) return
+  } catch { /* no lock yet */ }
+  try {
+    fs.mkdirSync(path.dirname(PULL_LOCK), { recursive: true })
+    fs.writeFileSync(PULL_LOCK, '')
+  } catch { /* best effort */ }
   const cli = path.join(path.dirname(fileURLToPath(import.meta.url)), 'presence.js')
   spawn(process.execPath, [cli, 'pull'], {
     detached: true,
