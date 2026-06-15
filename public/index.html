@@ -93,7 +93,23 @@ a:hover { text-decoration-color: var(--color-accent); }
 .nline { margin: 0; white-space: nowrap; overflow: hidden; text-overflow: clip; contain: paint; }
 
 .spinwrap { display: grid; gap: 3px; }
-.spin { color: var(--term-accent); }
+/* the spinner ✻ rotates, and the verb shimmers — like Claude Code's live status */
+.spin { color: var(--term-accent); display: inline-block; animation: star-spin 3s linear infinite; }
+@keyframes star-spin { to { transform: rotate(360deg); } }
+.ponder {
+  background: linear-gradient(100deg,
+    var(--term-accent) 0%, var(--term-accent) 38%,
+    oklch(93% 0.07 70) 50%,
+    var(--term-accent) 62%, var(--term-accent) 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: ponder-shimmer 2.4s linear infinite;
+}
+@keyframes ponder-shimmer { from { background-position: 120% 0; } to { background-position: -120% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .spin { animation: none; }
+  .ponder { animation: none; -webkit-text-fill-color: var(--term-accent); color: var(--term-accent); }
+}
 .tip2 { padding-left: 1.4ch; }
 .crown { color: var(--term-accent); }
 .char-slot { line-height: 1.5; }
@@ -156,7 +172,7 @@ a:hover { text-decoration-color: var(--color-accent); }
   <!-- pinned footer: the live product -->
   <footer class="notch" aria-label="terminally.social statusline">
     <div class="spinwrap">
-      <p class="nline"><span class="spin">✻</span> <span class="meta">Pondering… (<span class="t-secs">30s</span> · ↓ <span class="t-toks">4.8k</span> tokens)</span></p>
+      <p class="nline"><span class="spin">✻</span> <span class="ponder">Pondering…</span> <span class="meta">(<span class="t-secs">30s</span> · ↓ <span class="t-toks">4.8k</span> tokens)</span></p>
       <p class="nline tip2"><span class="meta">└ Tip:</span> 👥 tokenmaxxing today: <span class="crown">👑 🍓 sam (<span class="t-sam">4.2M</span>)</span> <span class="meta">·</span> 🖇 dario (3.8M) <span class="meta">·</span> 🍋 you (1.4M)</p>
     </div>
 
